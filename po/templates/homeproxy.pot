@@ -1204,6 +1204,62 @@ msgstr ""
 msgid "Interrupt existing connections when the selected outbound has changed."
 msgstr ""
 
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Import SOCKS5 mappings"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Format: host|port|username|password|expire"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Start IP"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Clients per proxy"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Section prefix"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "No SOCKS5 mapping found."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "valid IPv4 address"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "positive integer"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "valid section prefix"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Invalid SOCKS5 mapping at line %d."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Invalid SOCKS5 host at line %d."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Invalid SOCKS5 port at line %d."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Client IP allocation exceeded IPv4 range."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Successfully imported %d SOCKS5 mappings."
+msgstr ""
+
 #: htdocs/luci-static/resources/view/homeproxy/node.js:507
 msgid "Interval checking for idle sessions, in seconds."
 msgstr ""

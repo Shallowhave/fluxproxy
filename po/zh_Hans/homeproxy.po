@@ -1231,6 +1231,62 @@ msgstr "中断现有连接"
 msgid "Interrupt existing connections when the selected outbound has changed."
 msgstr "当选择的出站发生变化时中断现有连接。"
 
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Import SOCKS5 mappings"
+msgstr "导入 SOCKS5 映射"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Format: host|port|username|password|expire"
+msgstr "格式：主机|端口|用户名|密码|到期日"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Start IP"
+msgstr "起始 IP"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Clients per proxy"
+msgstr "每个代理承载客户端数"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Section prefix"
+msgstr "配置段前缀"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "No SOCKS5 mapping found."
+msgstr "未找到 SOCKS5 映射。"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "valid IPv4 address"
+msgstr "有效的 IPv4 地址"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "positive integer"
+msgstr "正整数"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "valid section prefix"
+msgstr "有效的配置段前缀"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Invalid SOCKS5 mapping at line %d."
+msgstr "第 %d 行 SOCKS5 映射无效。"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Invalid SOCKS5 host at line %d."
+msgstr "第 %d 行 SOCKS5 主机无效。"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Invalid SOCKS5 port at line %d."
+msgstr "第 %d 行 SOCKS5 端口无效。"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Client IP allocation exceeded IPv4 range."
+msgstr "客户端 IP 分配超出 IPv4 范围。"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Successfully imported %d SOCKS5 mappings."
+msgstr "成功导入 %d 条 SOCKS5 映射。"
+
 #: htdocs/luci-static/resources/view/homeproxy/node.js:507
 msgid "Interval checking for idle sessions, in seconds."
 msgstr "空闲会话检查间隔（单位：秒）。"

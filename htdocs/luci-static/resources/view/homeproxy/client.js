@@ -59,6 +59,37 @@ function renderStatus(isRunning, version) {
 	return renderHTML;
 }
 
+function parseSocks5MappingLine(line) {
+	let fields = line.split('|').map((field) => field.trim());
+	if (fields.length !== 5 || fields.some((field) => !field))
+		return null;
+
+	return {
+		address: fields[0],
+		port: fields[1],
+		username: fields[2],
+		password: fields[3],
+		expire: fields[4]
+	};
+}
+
+function nextIPv4Address(ipaddr, offset) {
+	let parts = ipaddr.split('.').map((part) => parseInt(part, 10));
+	if (parts.length !== 4 || parts.some((part) => isNaN(part) || part < 0 || part > 255))
+		return null;
+
+	let value = ((parts[0] << 24) >>> 0) + (parts[1] << 16) + (parts[2] << 8) + parts[3] + offset;
+	if (value > 0xffffffff)
+		return null;
+
+	return [
+		(value >>> 24) & 255,
+		(value >>> 16) & 255,
+		(value >>> 8) & 255,
+		value & 255
+	].join('.');
+}
+
 let stubValidator = {
 	factory: validation,
 	apply(type, value, args) {
@@ -563,6 +594,138 @@ return view.extend({
 			_('Interrupt existing connections when the selected outbound has changed.'));
 		so.depends('node', 'urltest');
 		so.modalonly = true;
+
+		ss.handleSocks5MappingImport = function() {
+			let textarea = new ui.Textarea();
+			let startIp = E('input', {
+				'class': 'cbi-input-text',
+				'placeholder': '192.168.1.100'
+			});
+			let clientsPerProxy = E('input', {
+				'class': 'cbi-input-text',
+				'type': 'number',
+				'min': '1',
+				'value': '1'
+			});
+			let prefix = E('input', {
+				'class': 'cbi-input-text',
+				'value': 'dayuip'
+			});
+
+			ui.showModal(_('Import SOCKS5 mappings'), [
+				E('p', _('Format: host|port|username|password|expire')),
+				textarea.render(),
+				E('div', { 'class': 'cbi-value' }, [
+					E('label', { 'class': 'cbi-value-title' }, _('Start IP')),
+					E('div', { 'class': 'cbi-value-field' }, [ startIp ])
+				]),
+				E('div', { 'class': 'cbi-value' }, [
+					E('label', { 'class': 'cbi-value-title' }, _('Clients per proxy')),
+					E('div', { 'class': 'cbi-value-field' }, [ clientsPerProxy ])
+				]),
+				E('div', { 'class': 'cbi-value' }, [
+					E('label', { 'class': 'cbi-value-title' }, _('Section prefix')),
+					E('div', { 'class': 'cbi-value-field' }, [ prefix ])
+				]),
+				E('div', { 'class': 'right' }, [
+					E('button', {
+						'class': 'btn',
+						'click': ui.hideModal
+					}, [ _('Cancel') ]),
+					' ',
+					E('button', {
+						'class': 'btn cbi-button-action',
+						'click': ui.createHandlerFn(this, () => {
+							let lines = textarea.getValue().trim().split(/\r?\n/).map((line) => line.trim()).filter((line) => line);
+							let start = startIp.value.trim();
+							let count = parseInt(clientsPerProxy.value, 10);
+							let namePrefix = prefix.value.trim() || 'dayuip';
+
+							if (!lines.length)
+								return ui.addNotification(null, E('p', _('No SOCKS5 mapping found.')));
+							if (!stubValidator.apply('ip4addr', start))
+								return ui.addNotification(null, E('p', _('Expecting: %s').format(_('valid IPv4 address'))));
+							if (!count || count < 1)
+								return ui.addNotification(null, E('p', _('Expecting: %s').format(_('positive integer'))));
+							if (!namePrefix.match(/^[A-Za-z0-9_]+$/))
+								return ui.addNotification(null, E('p', _('Expecting: %s').format(_('valid section prefix'))));
+
+							let imported = 0;
+							for (let i = 0; i < lines.length; i++) {
+								let cfg = parseSocks5MappingLine(lines[i]);
+								if (!cfg)
+									return ui.addNotification(null, E('p', _('Invalid SOCKS5 mapping at line %d.').format(i + 1)));
+								if (!stubValidator.apply('host', cfg.address))
+									return ui.addNotification(null, E('p', _('Invalid SOCKS5 host at line %d.').format(i + 1)));
+								if (!stubValidator.apply('port', cfg.port))
+									return ui.addNotification(null, E('p', _('Invalid SOCKS5 port at line %d.').format(i + 1)));
+
+								let sourceIps = [];
+								for (let j = 0; j < count; j++) {
+									let ipaddr = nextIPv4Address(start, i * count + j);
+									if (!ipaddr || !stubValidator.apply('ip4addr', ipaddr))
+										return ui.addNotification(null, E('p', _('Client IP allocation exceeded IPv4 range.')));
+									sourceIps.push(ipaddr + '/32');
+								}
+
+								let hash = hp.calcStringMD5([ cfg.address, cfg.port, cfg.username ].join('|')).slice(0, 12);
+								let nodeSid = namePrefix + '_node_' + hash;
+								let routingNodeSid = namePrefix + '_rnode_' + hash;
+								let routingRuleSid = namePrefix + '_rule_' + hash;
+								let label = '%s %s@%s:%s (%s)'.format(namePrefix, cfg.username, cfg.address, cfg.port, cfg.expire);
+
+								uci.remove(data[0], nodeSid);
+								uci.remove(data[0], routingNodeSid);
+								uci.remove(data[0], routingRuleSid);
+
+								uci.add(data[0], 'node', nodeSid);
+								uci.set(data[0], nodeSid, 'label', label);
+								uci.set(data[0], nodeSid, 'type', 'socks');
+								uci.set(data[0], nodeSid, 'address', cfg.address);
+								uci.set(data[0], nodeSid, 'port', cfg.port);
+								uci.set(data[0], nodeSid, 'username', cfg.username);
+								uci.set(data[0], nodeSid, 'password', cfg.password);
+								uci.set(data[0], nodeSid, 'socks_version', '5');
+
+								uci.add(data[0], 'routing_node', routingNodeSid);
+								uci.set(data[0], routingNodeSid, 'label', label);
+								uci.set(data[0], routingNodeSid, 'enabled', '1');
+								uci.set(data[0], routingNodeSid, 'node', nodeSid);
+
+								uci.add(data[0], 'routing_rule', routingRuleSid);
+								uci.set(data[0], routingRuleSid, 'label', label);
+								uci.set(data[0], routingRuleSid, 'enabled', '1');
+								uci.set(data[0], routingRuleSid, 'action', 'route');
+								uci.set(data[0], routingRuleSid, 'outbound', routingNodeSid);
+								uci.set(data[0], routingRuleSid, 'source_ip_cidr', sourceIps);
+
+								imported++;
+							}
+
+							return uci.save()
+								.then(L.bind(this.map.load, this.map))
+								.then(L.bind(this.map.reset, this.map))
+								.then(L.ui.hideModal)
+								.then(() => {
+									ui.addNotification(null, E('p', _('Successfully imported %d SOCKS5 mappings.').format(imported)));
+								});
+						})
+					}, [ _('Import') ])
+				])
+			]);
+		}
+
+		ss.renderSectionAdd = function(/* ... */) {
+			let el = hp.renderSectionAdd(this);
+
+			el.appendChild(E('button', {
+				'class': 'cbi-button cbi-button-add',
+				'title': _('Import SOCKS5 mappings'),
+				'click': ui.createHandlerFn(this, 'handleSocks5MappingImport')
+			}, [ _('Import SOCKS5 mappings') ]));
+
+			return el;
+		}
 		/* Routing nodes end */
 
 		/* Routing rules start */
