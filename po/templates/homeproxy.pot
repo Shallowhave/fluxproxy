@@ -1955,7 +1955,11 @@ msgstr ""
 msgid "Redirect TCP + TProxy UDP"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/homeproxy/client.js:289
+#: htdocs/luci-static/resources/view/homeproxy/client.js:288
+msgid "TProxy TCP/UDP"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js:291
 msgid "Redirect TCP + Tun UDP"
 msgstr ""
 

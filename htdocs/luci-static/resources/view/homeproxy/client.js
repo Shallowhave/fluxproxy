@@ -283,8 +283,10 @@ return view.extend({
 
 		o = s.taboption('routing', form.ListValue, 'proxy_mode', _('Proxy mode'));
 		o.value('redirect', _('Redirect TCP'));
-		if (features.hp_has_tproxy)
+		if (features.hp_has_tproxy) {
 			o.value('redirect_tproxy', _('Redirect TCP + TProxy UDP'));
+			o.value('tproxy', _('TProxy TCP/UDP'));
+		}
 		if (features.hp_has_ip_full && features.hp_has_tun) {
 			o.value('redirect_tun', _('Redirect TCP + Tun UDP'));
 			o.value('tun', _('Tun TCP/UDP'));

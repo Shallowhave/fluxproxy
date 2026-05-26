@@ -117,14 +117,16 @@ if (routing_mode === 'custom')
 else
 	udp_timeout = uci.get(uciconfig, 'infra', 'udp_timeout');
 
-if (match(proxy_mode, /redirect/)) {
+if (match(proxy_mode, /redirect|tproxy/)) {
 	self_mark = uci.get(uciconfig, 'infra', 'self_mark') || '100';
+}
+if (match(proxy_mode, /redirect/)) {
 	redirect_port = uci.get(uciconfig, 'infra', 'redirect_port') || '5331';
 }
-if (match(proxy_mode), /tproxy/)
-	if (main_udp_node !== 'nil' || routing_mode === 'custom')
+if (match(proxy_mode, /tproxy/))
+	if (proxy_mode === 'tproxy' || main_udp_node !== 'nil' || routing_mode === 'custom')
 		tproxy_port = uci.get(uciconfig, 'infra', 'tproxy_port') || '5332';
-if (match(proxy_mode), /tun/) {
+if (match(proxy_mode, /tun/)) {
 	tun_name = uci.get(uciconfig, uciinfra, 'tun_name') || 'singtun0';
 	tun_addr4 = uci.get(uciconfig, uciinfra, 'tun_addr4') || '172.19.0.1/30';
 	tun_addr6 = uci.get(uciconfig, uciinfra, 'tun_addr6') || 'fdfe:dcba:9876::1/126';
@@ -627,7 +629,7 @@ if (match(proxy_mode, /tproxy/))
 
 		listen: '::',
 		listen_port: int(tproxy_port),
-		network: 'udp',
+		network: (proxy_mode === 'tproxy') ? null : 'udp',
 		udp_timeout: strToTime(udp_timeout),
 		sniff: true,
 		sniff_override_destination: strToBool(sniff_override)

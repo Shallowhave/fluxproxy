@@ -110,10 +110,10 @@ start_service() {
 		local table_mark
 		config_get table_mark "infra" "table_mark" "100"
 		case "$proxy_mode" in
-		"redirect_tproxy")
+		"redirect_tproxy"|"tproxy")
 			local outbound_udp_node
 			config_get outbound_udp_node "config" "main_udp_node" "nil"
-			if [ "$outbound_udp_node" != "nil" ] || [ "$routing_mode" = "custom" ]; then
+			if [ "$proxy_mode" = "tproxy" ] || [ "$outbound_udp_node" != "nil" ] || [ "$routing_mode" = "custom" ]; then
 				local tproxy_mark
 				config_get tproxy_mark "infra" "tproxy_mark" "101"
 

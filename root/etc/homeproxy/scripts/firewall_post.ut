@@ -79,8 +79,10 @@ let self_mark, redirect_port,
     tproxy_port, tproxy_mark,
     tun_name, tun_mark;
 
-if (match(proxy_mode, /redirect/)) {
+if (match(proxy_mode, /redirect|tproxy/)) {
 	self_mark = uci.get(cfgname, 'infra', 'self_mark') || '100';
+}
+if (match(proxy_mode, /redirect/)) {
 	redirect_port = uci.get(cfgname, 'infra', 'redirect_port') || '5331';
 }
 if (match(proxy_mode, /tproxy/))
@@ -92,6 +94,8 @@ if (match(proxy_mode, /tun/)) {
 	tun_name = uci.get(cfgname, 'infra', 'tun_name') || 'singtun0';
 	tun_mark = resolve_mark(uci.get(cfgname, 'infra', 'tun_mark') || '102');
 }
+
+const tproxy_l4proto = (proxy_mode === 'tproxy') ? 'tcp, udp' : 'udp';
 
 const control_options = [
 	"listen_interfaces", "lan_proxy_mode",
@@ -375,27 +379,27 @@ chain homeproxy_output_redir {
 }
 {% endif %}
 
-{# UDP tproxy #}
-{% if (match(proxy_mode, /tproxy/) && (outbound_udp_node !== 'nil' || routing_mode === 'custom')): %}
+{# TProxy #}
+{% if (match(proxy_mode, /tproxy/) && (proxy_mode === 'tproxy' || outbound_udp_node !== 'nil' || routing_mode === 'custom')): %}
 chain homeproxy_mangle_tproxy {
-	meta l4proto udp meta mark set {{ tproxy_mark }} tproxy ip to 127.0.0.1:{{ tproxy_port }} counter accept
+	meta l4proto { {{ tproxy_l4proto }} } meta mark set {{ tproxy_mark }} tproxy ip to 127.0.0.1:{{ tproxy_port }} counter accept
 	{% if (ipv6_support === '1'): %}
-	meta l4proto udp meta mark set {{ tproxy_mark }} tproxy ip6 to [::1]:{{ tproxy_port }} counter accept
+	meta l4proto { {{ tproxy_l4proto }} } meta mark set {{ tproxy_mark }} tproxy ip6 to [::1]:{{ tproxy_port }} counter accept
 	{% endif %}
 }
 
 chain homeproxy_mangle_tproxy_port {
 	{% if (routing_port): %}
-	udp dport != @homeproxy_routing_port counter return
+	th dport != @homeproxy_routing_port counter return
 	{% endif %}
 	goto homeproxy_mangle_tproxy
 }
 
 chain homeproxy_mangle_mark {
 	{% if (routing_port): %}
-	udp dport != @homeproxy_routing_port counter return
+	th dport != @homeproxy_routing_port counter return
 	{% endif %}
-	meta l4proto udp meta mark set {{ tproxy_mark }} counter accept
+	meta l4proto { {{ tproxy_l4proto }} } meta mark set {{ tproxy_mark }} counter accept
 }
 
 chain homeproxy_mangle_lanac {
@@ -533,11 +537,11 @@ chain homeproxy_mangle_output {
 }
 
 chain mangle_prerouting {
-	meta nfproto { {{ (ipv6_support === '1') ? 'ipv4, ipv6' : 'ipv4' }} } meta l4proto udp jump homeproxy_mangle_lanac
+	meta nfproto { {{ (ipv6_support === '1') ? 'ipv4, ipv6' : 'ipv4' }} } meta l4proto { {{ tproxy_l4proto }} } jump homeproxy_mangle_lanac
 }
 
 chain mangle_output {
-	meta nfproto { {{ (ipv6_support === '1') ? 'ipv4, ipv6' : 'ipv4' }} } meta l4proto udp jump homeproxy_mangle_output
+	meta nfproto { {{ (ipv6_support === '1') ? 'ipv4, ipv6' : 'ipv4' }} } meta l4proto { {{ tproxy_l4proto }} } jump homeproxy_mangle_output
 }
 {% endif %}
 
