@@ -18,6 +18,7 @@ function Assert-Match {
 Assert-Match $clientView 'parseSocks5MappingLine' 'Client view should parse host|port|username|password|expire SOCKS5 mapping lines.'
 Assert-Match $clientView 'nextIPv4Address' 'Client view should allocate client IP addresses sequentially.'
 Assert-Match $clientView 'handleSocks5MappingImport' 'Client view should expose a SOCKS5 mapping import handler.'
+Assert-Match $clientView "'require ui';" 'Client view should require LuCI ui before using ui helpers.'
 Assert-Match $clientView "uci\.add\(data\[0\], 'node'" 'Importer should create proxy node sections.'
 Assert-Match $clientView "uci\.add\(data\[0\], 'routing_node'" 'Importer should create routing node sections.'
 Assert-Match $clientView "uci\.add\(data\[0\], 'routing_rule'" 'Importer should create routing rule sections.'
