@@ -22,7 +22,12 @@ function get_mk_value() {
 PKG_NAME="$(get_mk_value "PKG_NAME")"
 if [ "$RELEASE_TYPE" == "release" ]; then
 	PKG_VERSION="$(get_mk_value "PKG_VERSION")"
-else
+	if [ -z "$PKG_VERSION" ]; then
+		PKG_VERSION="${GITHUB_REF_NAME:-}"
+		PKG_VERSION="${PKG_VERSION#v}"
+	fi
+fi
+if [ -z "$PKG_VERSION" ]; then
 	PKG_VERSION="$PKG_SOURCE_DATE_EPOCH~$(git rev-parse --short HEAD)"
 fi
 
