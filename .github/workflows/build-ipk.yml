@@ -66,7 +66,7 @@ jobs:
         run: |
           sudo -E rm -rf /var/lib/man-db/auto-update
           sudo -E apt-get update -qq
-          sudo -E apt-get install -y build-essential curl fakeroot libssl-dev lua5.1 meson ninja-build opkg-utils
+          sudo -E apt-get install -y build-essential curl fakeroot libssl-dev lua5.1 meson ninja-build
 
           pushd apk-tools
           meson setup build \
@@ -92,6 +92,19 @@ jobs:
 
           curl -fLO "https://raw.githubusercontent.com/openwrt/openwrt/master/scripts/ipkg-build"
           sudo install -m0755 ipkg-build /usr/local/bin/ipkg-build
+
+          curl -fLO "https://raw.githubusercontent.com/openwrt/openwrt/master/scripts/ipkg-make-index.sh"
+          sudo install -m0755 ipkg-make-index.sh /usr/local/bin/ipkg-make-index.sh
+
+          cat > mkhash <<'EOF'
+          #!/bin/sh
+          if [ "$1" = "sha256" ]; then
+            shift
+          fi
+          sha256sum "$@" | awk '{print $1}'
+          EOF
+          chmod 0755 mkhash
+          sudo install -m0755 mkhash /usr/local/bin/mkhash
 
       - name: Build ipk file
         run: |
@@ -134,7 +147,7 @@ jobs:
           cp .github/*.ipk repo/releases/
 
           pushd repo/releases
-          opkg-make-index . > Packages
+          MKHASH=mkhash ipkg-make-index.sh . > Packages
           gzip -9c Packages > Packages.gz
           popd
 

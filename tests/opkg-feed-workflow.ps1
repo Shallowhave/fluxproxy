@@ -15,8 +15,9 @@ function Assert-Match {
 	}
 }
 
-Assert-Match $workflow 'opkg-utils' 'The workflow should install opkg-utils so opkg-make-index is available.'
-Assert-Match $workflow 'opkg-make-index \. > Packages' 'The workflow should generate an opkg Packages index.'
+Assert-Match $workflow 'ipkg-make-index\.sh' 'The workflow should use OpenWrt ipkg-make-index.sh instead of an unavailable apt package.'
+Assert-Match $workflow 'raw\.githubusercontent\.com/openwrt/openwrt/master/scripts/ipkg-make-index\.sh' 'The workflow should download the package index script from OpenWrt.'
+Assert-Match $workflow 'MKHASH=mkhash ipkg-make-index\.sh \. > Packages' 'The workflow should generate an opkg Packages index with OpenWrt ipkg-make-index.sh.'
 Assert-Match $workflow 'gzip -9.*Packages' 'The workflow should generate Packages.gz for opkg clients.'
 Assert-Match $workflow 'peaceiris/actions-gh-pages@v4' 'The workflow should deploy the package feed to GitHub Pages.'
 Assert-Match $workflow 'publish_dir: ./repo' 'The GitHub Pages deploy step should publish the generated repo directory.'
