@@ -70,9 +70,11 @@ export root="${IPKG_INSTROOT}"
 export pkgname="'"$PKG_NAME"'"
 add_group_and_user
 default_postinst
-[ -n "${IPKG_INSTROOT}" ] || { rm -f /tmp/luci-indexcache.*
+[ -n "${IPKG_INSTROOT}" ] || {
+	rm -f /tmp/luci-indexcache /tmp/luci-indexcache.*
 	rm -rf /tmp/luci-modulecache/
-	killall -HUP rpcd 2>/dev/null
+	/etc/init.d/rpcd restart 2>/dev/null || killall -HUP rpcd 2>/dev/null
+	/etc/init.d/uhttpd restart 2>/dev/null || true
 	exit 0
 }' > "$TEMP_DIR/post-install"
 
@@ -86,9 +88,11 @@ export root="${IPKG_INSTROOT}"
 export pkgname="'"$PKG_NAME"'"
 add_group_and_user
 default_postinst
-[ -n "${IPKG_INSTROOT}" ] || { rm -f /tmp/luci-indexcache.*
+[ -n "${IPKG_INSTROOT}" ] || {
+	rm -f /tmp/luci-indexcache /tmp/luci-indexcache.*
 	rm -rf /tmp/luci-modulecache/
-	killall -HUP rpcd 2>/dev/null
+	/etc/init.d/rpcd restart 2>/dev/null || killall -HUP rpcd 2>/dev/null
+	/etc/init.d/uhttpd restart 2>/dev/null || true
 	exit 0
 }' > "$TEMP_DIR/post-upgrade"
 
@@ -104,7 +108,7 @@ default_prerm' > "$TEMP_DIR/pre-deinstall"
 		--info "version:$PKG_VERSION" \
 		--info "description:The modern ImmortalWrt proxy platform for ARM64/AMD64" \
 		--info "arch:all" \
-		--info "origin:https://github.com/immortalwrt/fluxproxy" \
+		--info "origin:https://github.com/Shallowhave/fluxproxy" \
 		--info "url:" \
 		--info "maintainer:Tianling Shen <cnsztl@immortalwrt.org>" \
 		--info "provides:" \
@@ -124,7 +128,7 @@ else
 		Version: $PKG_VERSION
 		Depends: libc, sing-box, firewall4, kmod-nft-tproxy, ucode-mod-digest
 		Conflicts: luci-app-homeproxy
-		Source: https://github.com/immortalwrt/fluxproxy
+		Source: https://github.com/Shallowhave/fluxproxy
 		SourceName: $PKG_NAME
 		Section: luci
 		SourceDateEpoch: $PKG_SOURCE_DATE_EPOCH

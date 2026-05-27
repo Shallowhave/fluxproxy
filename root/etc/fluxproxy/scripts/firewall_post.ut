@@ -86,7 +86,7 @@ if (match(proxy_mode, /redirect/)) {
 	redirect_port = uci.get(cfgname, 'infra', 'redirect_port') || '5331';
 }
 if (match(proxy_mode, /tproxy/))
-	if (outbound_udp_node !== 'nil' || routing_mode === 'custom') {
+	if (proxy_mode === 'tproxy' || outbound_udp_node !== 'nil' || routing_mode === 'custom') {
 		tproxy_port = uci.get(cfgname, 'infra', 'tproxy_port') || '5332';
 		tproxy_mark = resolve_mark(uci.get(cfgname, 'infra', 'tproxy_mark') || '101');
 	}
