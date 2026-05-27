@@ -11,7 +11,7 @@ opkg install luci-app-fluxproxy
 For APK-based OpenWrt/ImmortalWrt builds:
 
 ```sh
-echo 'https://shallowhave.github.io/fluxproxy/releases' >> /etc/apk/repositories
+echo 'ndx https://shallowhave.github.io/fluxproxy/releases/Packages.adb' >> /etc/apk/repositories
 apk --allow-untrusted update
 apk add --allow-untrusted luci-app-fluxproxy
 ```
