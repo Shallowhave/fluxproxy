@@ -1,0 +1,31 @@
+#!/bin/sh
+
+[ -f "/www/luci-static/resources/icons/loading.gif" ] && \
+	sed -i "s,/loading.svg,/loading.gif,g" "/www/luci-static/resources/view/fluxproxy/status.js"
+
+uci -q batch <<-EOF >"/dev/null"
+	delete firewall.fluxproxy_pre
+
+	delete firewall.fluxproxy_forward
+	set firewall.fluxproxy_forward=include
+	set firewall.fluxproxy_forward.type=nftables
+	set firewall.fluxproxy_forward.path="/var/run/fluxproxy/fw4_forward.nft"
+	set firewall.fluxproxy_forward.position="chain-pre"
+	set firewall.fluxproxy_forward.chain="forward"
+
+	delete firewall.fluxproxy_input
+	set firewall.fluxproxy_input=include
+	set firewall.fluxproxy_input.type=nftables
+	set firewall.fluxproxy_input.path="/var/run/fluxproxy/fw4_input.nft"
+	set firewall.fluxproxy_input.position="chain-pre"
+	set firewall.fluxproxy_input.chain="input"
+
+	delete firewall.fluxproxy_post
+	set firewall.fluxproxy_post=include
+	set firewall.fluxproxy_post.type=nftables
+	set firewall.fluxproxy_post.path="/var/run/fluxproxy/fw4_post.nft"
+	set firewall.fluxproxy_post.position="table-post"
+	commit firewall
+EOF
+
+exit 0

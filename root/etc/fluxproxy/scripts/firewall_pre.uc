@@ -4,9 +4,9 @@
 
 import { writefile } from 'fs';
 import { cursor } from 'uci';
-import { isEmpty, RUN_DIR } from 'homeproxy';
+import { isEmpty, RUN_DIR } from 'fluxproxy';
 
-const cfgname = 'homeproxy';
+const cfgname = 'fluxproxy';
 const uci = cursor();
 uci.load(cfgname);
 

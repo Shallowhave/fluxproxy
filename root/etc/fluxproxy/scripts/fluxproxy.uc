@@ -8,8 +8,8 @@ import { mkstemp } from 'fs';
 import { urldecode_params } from 'luci.http';
 
 /* Global variables start */
-export const HP_DIR = '/etc/homeproxy';
-export const RUN_DIR = '/var/run/homeproxy';
+export const HP_DIR = '/etc/fluxproxy';
+export const RUN_DIR = '/var/run/fluxproxy';
 /* Global variables end */
 
 /* Utilities start */
@@ -71,7 +71,7 @@ export function wGET(url, ua) {
 		return null;
 
 	if (!ua)
-		ua = 'Wget/1.21 (HomeProxy, like v2rayN)';
+		ua = 'Wget/1.21 (FluxProxy, like v2rayN)';
 
 	const output = executeCommand(`/usr/bin/wget -qO- --user-agent ${shellQuote(ua)} --timeout=10 ${shellQuote(url)}`) || {};
 	return trim(output.stdout);

@@ -1,45 +1,45 @@
 {
-	"admin/services/homeproxy": {
-		"title": "HomeProxy",
+	"admin/services/fluxproxy": {
+		"title": "FluxProxy",
 		"order": 10,
 		"action": {
 			"type": "firstchild"
 		},
 		"depends": {
-			"acl": [ "luci-app-homeproxy" ],
-			"uci": { "homeproxy": true }
+			"acl": [ "luci-app-fluxproxy" ],
+			"uci": { "fluxproxy": true }
 		}
 	},
-	"admin/services/homeproxy/client": {
+	"admin/services/fluxproxy/client": {
 		"title": "Client Settings",
 		"order": 10,
 		"action": {
 			"type": "view",
-			"path": "homeproxy/client"
+			"path": "fluxproxy/client"
 		}
 	},
-	"admin/services/homeproxy/node": {
+	"admin/services/fluxproxy/node": {
 		"title": "Node Settings",
 		"order": 15,
 		"action": {
 			"type": "view",
-			"path": "homeproxy/node"
+			"path": "fluxproxy/node"
 		}
 	},
-	"admin/services/homeproxy/server": {
+	"admin/services/fluxproxy/server": {
 		"title": "Server Settings",
 		"order": 20,
 		"action": {
 			"type": "view",
-			"path": "homeproxy/server"
+			"path": "fluxproxy/server"
 		}
 	},
-	"admin/services/homeproxy/status": {
+	"admin/services/fluxproxy/status": {
 		"title": "Service Status",
 		"order": 30,
 		"action": {
 			"type": "view",
-			"path": "homeproxy/status"
+			"path": "fluxproxy/status"
 		}
 	}
 }

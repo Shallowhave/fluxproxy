@@ -1,0 +1,24 @@
+{
+	"luci-app-fluxproxy": {
+		"description": "Grant access to fluxproxy configuration",
+		"read": {
+			"file": {
+				"/etc/fluxproxy/scripts/update_subscriptions.uc": [ "exec" ],
+				"/var/run/fluxproxy/fluxproxy.log": [ "read" ],
+				"/var/run/fluxproxy/sing-box-c.log": [ "read" ],
+				"/var/run/fluxproxy/sing-box-s.log": [ "read" ]
+			},
+			"ubus": {
+				"service": [ "list" ],
+				"luci.fluxproxy": [ "*" ]
+			},
+			"uci": [ "fluxproxy" ]
+		},
+		"write": {
+			"file": {
+				"/tmp/fluxproxy_certificate.tmp": [ "write" ]
+			},
+			"uci": [ "fluxproxy" ]
+		}
+	}
+}

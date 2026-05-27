@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $PSScriptRoot
-$clientView = Get-Content -Raw -Path (Join-Path $root 'htdocs/luci-static/resources/view/homeproxy/client.js')
+$clientView = Get-Content -Raw -Path (Join-Path $root 'htdocs/luci-static/resources/view/fluxproxy/client.js')
 
 function Assert-Match {
 	param(

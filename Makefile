@@ -11,15 +11,18 @@ LUCI_DEPENDS:= \
 	+firewall4 \
 	+kmod-nft-tproxy \
 	+ucode-mod-digest
+PKG_NAME:=luci-app-fluxproxy
 
-PKG_NAME:=luci-app-homeproxy
+define Package/luci-app-fluxproxy
+  CONFLICTS:=luci-app-homeproxy
+endef
 
-define Package/luci-app-homeproxy/conffiles
-/etc/config/homeproxy
-/etc/homeproxy/certs/
-/etc/homeproxy/ruleset/
-/etc/homeproxy/resources/direct_list.txt
-/etc/homeproxy/resources/proxy_list.txt
+define Package/luci-app-fluxproxy/conffiles
+/etc/config/fluxproxy
+/etc/fluxproxy/certs/
+/etc/fluxproxy/ruleset/
+/etc/fluxproxy/resources/direct_list.txt
+/etc/fluxproxy/resources/proxy_list.txt
 endef
 
 include $(TOPDIR)/feeds/luci/luci.mk

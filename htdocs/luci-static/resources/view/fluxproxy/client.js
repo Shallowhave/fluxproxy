@@ -14,7 +14,7 @@
 'require validation';
 'require view';
 
-'require homeproxy as hp';
+'require fluxproxy as hp';
 'require tools.firewall as fwtool';
 'require tools.widgets as widgets';
 
@@ -26,24 +26,24 @@ const callServiceList = rpc.declare({
 });
 
 const callReadDomainList = rpc.declare({
-	object: 'luci.homeproxy',
+	object: 'luci.fluxproxy',
 	method: 'acllist_read',
 	params: ['type'],
 	expect: { '': {} }
 });
 
 const callWriteDomainList = rpc.declare({
-	object: 'luci.homeproxy',
+	object: 'luci.fluxproxy',
 	method: 'acllist_write',
 	params: ['type', 'content'],
 	expect: { '': {} }
 });
 
 function getServiceStatus() {
-	return L.resolveDefault(callServiceList('homeproxy'), {}).then((res) => {
+	return L.resolveDefault(callServiceList('fluxproxy'), {}).then((res) => {
 		let isRunning = false;
 		try {
-			isRunning = res['homeproxy']['instances']['sing-box-c']['running'];
+			isRunning = res['fluxproxy']['instances']['sing-box-c']['running'];
 		} catch (e) { }
 		return isRunning;
 	});
@@ -53,9 +53,9 @@ function renderStatus(isRunning, version) {
 	let spanTemp = '<em><span style="color:%s"><strong>%s (sing-box v%s) %s</strong></span></em>';
 	let renderHTML;
 	if (isRunning)
-		renderHTML = spanTemp.format('green', _('HomeProxy'), version, _('RUNNING'));
+		renderHTML = spanTemp.format('green', _('FluxProxy'), version, _('RUNNING'));
 	else
-		renderHTML = spanTemp.format('red', _('HomeProxy'), version, _('NOT RUNNING'));
+		renderHTML = spanTemp.format('red', _('FluxProxy'), version, _('NOT RUNNING'));
 
 	return renderHTML;
 }
@@ -122,7 +122,7 @@ let stubValidator = {
 return view.extend({
 	load() {
 		return Promise.all([
-			uci.load('homeproxy'),
+			uci.load('fluxproxy'),
 			hp.getBuiltinFeatures(),
 			network.getHostHints()
 		]);
@@ -145,7 +145,7 @@ return view.extend({
 					String.format('[%s]', nodeaddr) : nodeaddr) + ':' + nodeport));
 		});
 
-		m = new form.Map('homeproxy', _('HomeProxy'),
+		m = new form.Map('fluxproxy', _('FluxProxy'),
 			_('The modern ImmortalWrt proxy platform for ARM64/AMD64.'));
 
 		s = m.section(form.TypedSection);
@@ -162,7 +162,7 @@ return view.extend({
 			]);
 		}
 
-		s = m.section(form.NamedSection, 'config', 'homeproxy');
+		s = m.section(form.NamedSection, 'config', 'fluxproxy');
 
 		s.tab('routing', _('Routing Settings'));
 
@@ -349,7 +349,7 @@ return view.extend({
 
 		/* Custom routing settings start */
 		/* Routing settings start */
-		o = s.taboption('routing', form.SectionValue, '_routing', form.NamedSection, 'routing', 'homeproxy');
+		o = s.taboption('routing', form.SectionValue, '_routing', form.NamedSection, 'routing', 'fluxproxy');
 		o.depends('routing_mode', 'custom');
 
 		ss = o.subsection;
@@ -361,8 +361,8 @@ return view.extend({
 		}
 		so.value('system', _('System'));
 		so.default = 'system';
-		so.depends('homeproxy.config.proxy_mode', 'redirect_tun');
-		so.depends('homeproxy.config.proxy_mode', 'tun');
+		so.depends('fluxproxy.config.proxy_mode', 'redirect_tun');
+		so.depends('fluxproxy.config.proxy_mode', 'tun');
 		so.rmempty = false;
 		so.onchange = function(ev, section_id, value) {
 			let desc = ev.target.nextElementSibling;
@@ -385,9 +385,9 @@ return view.extend({
 			_('In seconds.'));
 		so.datatype = 'uinteger';
 		so.placeholder = '300';
-		so.depends('homeproxy.config.proxy_mode', 'redirect_tproxy');
-		so.depends('homeproxy.config.proxy_mode', 'redirect_tun');
-		so.depends('homeproxy.config.proxy_mode', 'tun');
+		so.depends('fluxproxy.config.proxy_mode', 'redirect_tproxy');
+		so.depends('fluxproxy.config.proxy_mode', 'redirect_tun');
+		so.depends('fluxproxy.config.proxy_mode', 'tun');
 
 		so = ss.option(form.Flag, 'bypass_cn_traffic', _('Bypass CN traffic'),
 			_('Bypass mainland China traffic via firewall rules by default.'));
@@ -1061,7 +1061,7 @@ return view.extend({
 
 		/* DNS settings start */
 		s.tab('dns', _('DNS Settings'));
-		o = s.taboption('dns', form.SectionValue, '_dns', form.NamedSection, 'dns', 'homeproxy');
+		o = s.taboption('dns', form.SectionValue, '_dns', form.NamedSection, 'dns', 'fluxproxy');
 		o.depends('routing_mode', 'custom');
 
 		ss = o.subsection;
@@ -1536,7 +1536,7 @@ return view.extend({
 
 		so = ss.option(form.Value, 'path', _('Path'));
 		so.datatype = 'file';
-		so.placeholder = '/etc/homeproxy/ruleset/example.json';
+		so.placeholder = '/etc/fluxproxy/ruleset/example.json';
 		so.rmempty = false;
 		so.depends('type', 'local');
 		so.modalonly = true;
@@ -1589,7 +1589,7 @@ return view.extend({
 		/* ACL settings start */
 		s.tab('control', _('Access Control'));
 
-		o = s.taboption('control', form.SectionValue, '_control', form.NamedSection, 'control', 'homeproxy');
+		o = s.taboption('control', form.SectionValue, '_control', form.NamedSection, 'control', 'fluxproxy');
 		ss = o.subsection;
 
 		/* Interface control start */
@@ -1620,7 +1620,7 @@ return view.extend({
 		so.depends('lan_proxy_mode', 'except_listed');
 
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_direct_ipv6_ips', _('Direct IPv6 IP-s'), null, 'ipv6', hosts, true);
-		so.depends({'lan_proxy_mode': 'except_listed', 'homeproxy.config.ipv6_support': '1'});
+		so.depends({'lan_proxy_mode': 'except_listed', 'fluxproxy.config.ipv6_support': '1'});
 
 		so = fwtool.addMACOption(ss, 'lan_ip_policy', 'lan_direct_mac_addrs', _('Direct MAC-s'), null, hosts);
 		so.depends('lan_proxy_mode', 'except_listed');
@@ -1629,7 +1629,7 @@ return view.extend({
 		so.depends('lan_proxy_mode', 'listed_only');
 
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_proxy_ipv6_ips', _('Proxy IPv6 IP-s'), null, 'ipv6', hosts, true);
-		so.depends({'lan_proxy_mode': 'listed_only', 'homeproxy.config.ipv6_support': '1'});
+		so.depends({'lan_proxy_mode': 'listed_only', 'fluxproxy.config.ipv6_support': '1'});
 
 		so = fwtool.addMACOption(ss, 'lan_ip_policy', 'lan_proxy_mac_addrs', _('Proxy MAC-s'), null, hosts);
 		so.depends('lan_proxy_mode', 'listed_only');
@@ -1637,18 +1637,18 @@ return view.extend({
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_gaming_mode_ipv4_ips', _('Gaming mode IPv4 IP-s'), null, 'ipv4', hosts, true);
 
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_gaming_mode_ipv6_ips', _('Gaming mode IPv6 IP-s'), null, 'ipv6', hosts, true);
-		so.depends('homeproxy.config.ipv6_support', '1');
+		so.depends('fluxproxy.config.ipv6_support', '1');
 
 		so = fwtool.addMACOption(ss, 'lan_ip_policy', 'lan_gaming_mode_mac_addrs', _('Gaming mode MAC-s'), null, hosts);
 
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_global_proxy_ipv4_ips', _('Global proxy IPv4 IP-s'), null, 'ipv4', hosts, true);
-		so.depends({'homeproxy.config.routing_mode': 'custom', '!reverse': true});
+		so.depends({'fluxproxy.config.routing_mode': 'custom', '!reverse': true});
 
 		so = fwtool.addIPOption(ss, 'lan_ip_policy', 'lan_global_proxy_ipv6_ips', _('Global proxy IPv6 IP-s'), null, 'ipv6', hosts, true);
-		so.depends({'homeproxy.config.routing_mode': /^((?!custom).)+$/, 'homeproxy.config.ipv6_support': '1'});
+		so.depends({'fluxproxy.config.routing_mode': /^((?!custom).)+$/, 'fluxproxy.config.ipv6_support': '1'});
 
 		so = fwtool.addMACOption(ss, 'lan_ip_policy', 'lan_global_proxy_mac_addrs', _('Global proxy MAC-s'), null, hosts);
-		so.depends({'homeproxy.config.routing_mode': 'custom', '!reverse': true});
+		so.depends({'fluxproxy.config.routing_mode': 'custom', '!reverse': true});
 		/* LAN IP policy end */
 
 		/* WAN IP policy start */
@@ -1659,14 +1659,14 @@ return view.extend({
 
 		so = ss.taboption('wan_ip_policy', form.DynamicList, 'wan_proxy_ipv6_ips', _('Proxy IPv6 IP-s'));
 		so.datatype = 'or(ip6addr, cidr6)';
-		so.depends('homeproxy.config.ipv6_support', '1');
+		so.depends('fluxproxy.config.ipv6_support', '1');
 
 		so = ss.taboption('wan_ip_policy', form.DynamicList, 'wan_direct_ipv4_ips', _('Direct IPv4 IP-s'));
 		so.datatype = 'or(ip4addr, cidr4)';
 
 		so = ss.taboption('wan_ip_policy', form.DynamicList, 'wan_direct_ipv6_ips', _('Direct IPv6 IP-s'));
 		so.datatype = 'or(ip6addr, cidr6)';
-		so.depends('homeproxy.config.ipv6_support', '1');
+		so.depends('fluxproxy.config.ipv6_support', '1');
 		/* WAN IP policy end */
 
 		/* Proxy domain list start */
@@ -1676,7 +1676,7 @@ return view.extend({
 		so.rows = 10;
 		so.monospace = true;
 		so.datatype = 'hostname';
-		so.depends({'homeproxy.config.routing_mode': 'custom', '!reverse': true});
+		so.depends({'fluxproxy.config.routing_mode': 'custom', '!reverse': true});
 		so.load = function(/* ... */) {
 			return L.resolveDefault(callReadDomainList('proxy_list')).then((res) => {
 				return res.content;
@@ -1708,7 +1708,7 @@ return view.extend({
 		so.rows = 10;
 		so.monospace = true;
 		so.datatype = 'hostname';
-		so.depends({'homeproxy.config.routing_mode': 'custom', '!reverse': true});
+		so.depends({'fluxproxy.config.routing_mode': 'custom', '!reverse': true});
 		so.load = function(/* ... */) {
 			return L.resolveDefault(callReadDomainList('direct_list')).then((res) => {
 				return res.content;

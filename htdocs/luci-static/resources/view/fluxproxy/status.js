@@ -19,13 +19,13 @@ const css = '				\
 .description {				\
 	background-color: #33ccff;	\
 }					\
-.homeproxy-log-panel {			\
+.fluxproxy-log-panel {			\
 	border: 1px solid #d8dee6;	\
 	border-radius: 4px;		\
 	overflow: hidden;		\
 	background: #fff;		\
 }					\
-.homeproxy-log-toolbar {		\
+.fluxproxy-log-toolbar {		\
 	display: flex;			\
 	align-items: center;		\
 	gap: 8px;			\
@@ -33,13 +33,13 @@ const css = '				\
 	background: #f5f7fa;		\
 	border-bottom: 1px solid #e4e8ef;	\
 }					\
-.homeproxy-log-tabs {			\
+.fluxproxy-log-tabs {			\
 	display: grid;			\
 	grid-template-columns: repeat(3, minmax(0, 1fr));	\
 	gap: 10px;			\
 	flex: 1;			\
 }					\
-.homeproxy-log-tab {			\
+.fluxproxy-log-tab {			\
 	border: 1px solid #d8dee6;	\
 	border-radius: 4px;		\
 	background: #fff;		\
@@ -48,18 +48,18 @@ const css = '				\
 	text-align: center;		\
 	cursor: pointer;		\
 }					\
-.homeproxy-log-tab.active {		\
+.fluxproxy-log-tab.active {		\
 	border-color: #3b82f6;		\
 	background: #3b82f6;		\
 	color: #fff;			\
 	font-weight: 600;		\
 }					\
-.homeproxy-log-actions {		\
+.fluxproxy-log-actions {		\
 	display: flex;			\
 	align-items: center;		\
 	gap: 6px;			\
 }					\
-.homeproxy-log-table {			\
+.fluxproxy-log-table {			\
 	max-height: 520px;		\
 	overflow: auto;			\
 	font-family: Consolas, Monaco, monospace;	\
@@ -67,33 +67,33 @@ const css = '				\
 	line-height: 1.5;		\
 	text-align: left;		\
 }					\
-.homeproxy-log-row {			\
+.fluxproxy-log-row {			\
 	display: grid;			\
 	grid-template-columns: 42px 152px 96px minmax(360px, 1fr);	\
 	align-items: center;		\
 	min-width: 760px;		\
 	border-bottom: 1px solid #f1f3f6;	\
 }					\
-.homeproxy-log-row:nth-child(odd) {	\
+.fluxproxy-log-row:nth-child(odd) {	\
 	background: #fcfdff;		\
 }					\
-.homeproxy-log-row:hover {		\
+.fluxproxy-log-row:hover {		\
 	background: #fff8df;		\
 }					\
-.homeproxy-log-cell {			\
+.fluxproxy-log-cell {			\
 	padding: 3px 6px;		\
 	white-space: pre-wrap;		\
 	word-break: break-word;		\
 }					\
-.homeproxy-log-line {			\
+.fluxproxy-log-line {			\
 	color: #7f8794;			\
 	text-align: right;		\
 	background: #f6f8fb;		\
 }					\
-.homeproxy-log-time {			\
+.fluxproxy-log-time {			\
 	color: #a855f7;			\
 }					\
-.homeproxy-log-level {			\
+.fluxproxy-log-level {			\
 	display: inline-block;		\
 	min-width: 68px;		\
 	border-radius: 4px;		\
@@ -101,39 +101,39 @@ const css = '				\
 	text-align: center;		\
 	font-weight: 600;		\
 }					\
-.homeproxy-log-level-info, .homeproxy-log-level-daemon {	\
+.fluxproxy-log-level-info, .fluxproxy-log-level-daemon {	\
 	background: #d9f3f4;		\
 	color: #0891b2;			\
 }					\
-.homeproxy-log-level-warn, .homeproxy-log-level-warning {	\
+.fluxproxy-log-level-warn, .fluxproxy-log-level-warning {	\
 	background: #fde8d8;		\
 	color: #f97316;			\
 }					\
-.homeproxy-log-level-error, .homeproxy-log-level-fatal, .homeproxy-log-level-panic {	\
+.fluxproxy-log-level-error, .fluxproxy-log-level-fatal, .fluxproxy-log-level-panic {	\
 	background: #ffd6d6;		\
 	color: #ef4444;			\
 }					\
-.homeproxy-log-level-debug, .homeproxy-log-level-trace {	\
+.fluxproxy-log-level-debug, .fluxproxy-log-level-trace {	\
 	background: #e5e7eb;		\
 	color: #64748b;			\
 }					\
-.homeproxy-log-message.error, .homeproxy-log-message.fatal, .homeproxy-log-message.panic {	\
+.fluxproxy-log-message.error, .fluxproxy-log-message.fatal, .fluxproxy-log-message.panic {	\
 	color: #dc2626;			\
 	font-weight: 600;		\
 }					\
-.homeproxy-log-message.warn, .homeproxy-log-message.warning {	\
+.fluxproxy-log-message.warn, .fluxproxy-log-message.warning {	\
 	color: #c2410c;			\
 	font-weight: 600;		\
 }					\
-.homeproxy-log-message.info, .homeproxy-log-message.daemon {	\
+.fluxproxy-log-message.info, .fluxproxy-log-message.daemon {	\
 	color: #047857;			\
 }';
 
-const hp_dir = '/var/run/homeproxy';
+const hp_dir = '/var/run/fluxproxy';
 
 function getConnStat(o, site) {
 	const callConnStat = rpc.declare({
-		object: 'luci.homeproxy',
+		object: 'luci.fluxproxy',
 		method: 'connection_check',
 		params: ['site'],
 		expect: { '': {} }
@@ -162,14 +162,14 @@ function getConnStat(o, site) {
 
 function getResVersion(o, type) {
 	const callResVersion = rpc.declare({
-		object: 'luci.homeproxy',
+		object: 'luci.fluxproxy',
 		method: 'resources_get_version',
 		params: ['type'],
 		expect: { '': {} }
 	});
 
 	const callResUpdate = rpc.declare({
-		object: 'luci.homeproxy',
+		object: 'luci.fluxproxy',
 		method: 'resources_update',
 		params: ['type'],
 		expect: { '': {} }
@@ -240,23 +240,23 @@ function parseLogLine(line) {
 function renderLogRows(content) {
 	let lines = (content || '').trim().split(/\r?\n/).filter((line) => line.length);
 	if (!lines.length)
-		return E('div', { 'class': 'homeproxy-log-row' }, [
-			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-line' }, '1'),
-			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-time' }, ''),
-			E('span', { 'class': 'homeproxy-log-cell' }, ''),
-			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-message' }, _('Log is empty.'))
+		return E('div', { 'class': 'fluxproxy-log-row' }, [
+			E('span', { 'class': 'fluxproxy-log-cell fluxproxy-log-line' }, '1'),
+			E('span', { 'class': 'fluxproxy-log-cell fluxproxy-log-time' }, ''),
+			E('span', { 'class': 'fluxproxy-log-cell' }, ''),
+			E('span', { 'class': 'fluxproxy-log-cell fluxproxy-log-message' }, _('Log is empty.'))
 		]);
 
 	return lines.map((line, idx) => {
 		let item = parseLogLine(line);
 		let level = (item.level || '').toLowerCase();
 
-		return E('div', { 'class': 'homeproxy-log-row' }, [
-			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-line' }, String(idx + 1)),
-			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-time' }, item.time),
-			E('span', { 'class': 'homeproxy-log-cell' }, item.level ?
-				E('span', { 'class': 'homeproxy-log-level homeproxy-log-level-' + level }, item.level) : ''),
-			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-message ' + level }, item.message)
+		return E('div', { 'class': 'fluxproxy-log-row' }, [
+			E('span', { 'class': 'fluxproxy-log-cell fluxproxy-log-line' }, String(idx + 1)),
+			E('span', { 'class': 'fluxproxy-log-cell fluxproxy-log-time' }, item.time),
+			E('span', { 'class': 'fluxproxy-log-cell' }, item.level ?
+				E('span', { 'class': 'fluxproxy-log-level fluxproxy-log-level-' + level }, item.level) : ''),
+			E('span', { 'class': 'fluxproxy-log-cell fluxproxy-log-message ' + level }, item.message)
 		]);
 	});
 }
@@ -265,7 +265,7 @@ function createLogLevelSelect(map, section) {
 	if (!section)
 		return '';
 
-	const selected = uci.get('homeproxy', section, 'log_level') || 'warn';
+	const selected = uci.get('fluxproxy', section, 'log_level') || 'warn';
 	const choices = {
 		trace: _('Trace'),
 		debug: _('Debug'),
@@ -280,7 +280,7 @@ function createLogLevelSelect(map, section) {
 		'class': 'cbi-input-select',
 		'style': 'width: 6em;',
 		'change': ui.createHandlerFn(this, (ev) => {
-			uci.set('homeproxy', section, 'log_level', ev.target.value);
+			uci.set('fluxproxy', section, 'log_level', ev.target.value);
 			return map.save(null, true).then(() => {
 				ui.changes.apply(true);
 			});
@@ -300,7 +300,7 @@ function createLogLevelSelect(map, section) {
 function getLogSection(filename) {
 	let section;
 	switch (filename) {
-	case 'homeproxy':
+	case 'fluxproxy':
 		section = null;
 		break;
 	case 'sing-box-c':
@@ -316,27 +316,27 @@ function getLogSection(filename) {
 
 function renderLogPanel(map) {
 	const callLogClean = rpc.declare({
-		object: 'luci.homeproxy',
+		object: 'luci.fluxproxy',
 		method: 'log_clean',
 		params: ['type'],
 		expect: { '': {} }
 	});
 
-	let activeLog = 'homeproxy';
+	let activeLog = 'fluxproxy';
 	const logs = [
-		{ file: 'homeproxy', title: _('HomeProxy log') },
+		{ file: 'fluxproxy', title: _('FluxProxy log') },
 		{ file: 'sing-box-c', title: _('sing-box client log') },
 		{ file: 'sing-box-s', title: _('sing-box server log') }
 	];
 	const tabNodes = {};
-	const logTable = E('div', { 'class': 'homeproxy-log-table' },
+	const logTable = E('div', { 'class': 'fluxproxy-log-table' },
 		E('img', {
 			'src': L.resource('icons/loading.svg'),
 			'alt': _('Loading'),
 			'style': 'vertical-align:middle'
 		}, _('Collecting data...'))
 	);
-	const actions = E('div', { 'class': 'homeproxy-log-actions' });
+	const actions = E('div', { 'class': 'fluxproxy-log-actions' });
 
 	function refreshLog() {
 		return fs.read_direct(String.format('%s/%s.log', hp_dir, activeLog), 'text')
@@ -377,9 +377,9 @@ function renderLogPanel(map) {
 		return refreshLog();
 	}));
 
-	let tabs = E('div', { 'class': 'homeproxy-log-tabs' }, logs.map((log) => {
+	let tabs = E('div', { 'class': 'fluxproxy-log-tabs' }, logs.map((log) => {
 		let tab = E('button', {
-			'class': 'homeproxy-log-tab',
+			'class': 'fluxproxy-log-tab',
 			'click': ui.createHandlerFn(this, () => {
 				setActiveLog(log.file);
 			})
@@ -394,8 +394,8 @@ function renderLogPanel(map) {
 	return E([
 		E('style', [ css ]),
 		E('div', { 'class': 'cbi-map' }, [
-			E('div', { 'class': 'homeproxy-log-panel' }, [
-				E('div', { 'class': 'homeproxy-log-toolbar' }, [
+			E('div', { 'class': 'fluxproxy-log-panel' }, [
+				E('div', { 'class': 'fluxproxy-log-toolbar' }, [
 					tabs,
 					actions
 				]),
@@ -412,9 +412,9 @@ return view.extend({
 	render() {
 		let m, s, o;
 
-		m = new form.Map('homeproxy');
+		m = new form.Map('fluxproxy');
 
-		s = m.section(form.NamedSection, 'config', 'homeproxy', _('Connection check'));
+		s = m.section(form.NamedSection, 'config', 'fluxproxy', _('Connection check'));
 		s.anonymous = true;
 
 		o = s.option(form.DummyValue, '_check_baidu', _('BaiDu'));
@@ -423,7 +423,7 @@ return view.extend({
 		o = s.option(form.DummyValue, '_check_google', _('Google'));
 		o.cfgvalue = L.bind(getConnStat, this, o, 'google');
 
-		s = m.section(form.NamedSection, 'config', 'homeproxy', _('Resources management'));
+		s = m.section(form.NamedSection, 'config', 'fluxproxy', _('Resources management'));
 		s.anonymous = true;
 
 		o = s.option(form.DummyValue, '_china_ip4_version', _('China IPv4 list version'));
@@ -460,7 +460,7 @@ return view.extend({
 			return node;
 		}
 
-		s = m.section(form.NamedSection, 'config', 'homeproxy');
+		s = m.section(form.NamedSection, 'config', 'fluxproxy');
 		s.anonymous = true;
 
 		o = s.option(form.DummyValue, '_runtime_logview');

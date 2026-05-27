@@ -3,9 +3,9 @@
 Published builds are available as an opkg feed through GitHub Pages:
 
 ```sh
-echo 'src/gz homeproxy https://shallowhave.github.io/homeproxy/releases' >> /etc/opkg/customfeeds.conf
+echo 'src/gz fluxproxy https://shallowhave.github.io/homeproxy/releases' >> /etc/opkg/customfeeds.conf
 opkg update
-opkg install luci-app-homeproxy
+opkg install luci-app-fluxproxy
 ```
 
 TODO:
