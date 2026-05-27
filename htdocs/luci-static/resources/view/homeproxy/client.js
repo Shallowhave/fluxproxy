@@ -704,26 +704,26 @@ return view.extend({
 								uci.remove(data[0], routingNodeSid);
 								uci.remove(data[0], routingRuleSid);
 
-								uci.add(data[0], 'node', nodeSid);
-								uci.set(data[0], nodeSid, 'label', label);
-								uci.set(data[0], nodeSid, 'type', 'socks');
-								uci.set(data[0], nodeSid, 'address', cfg.address);
-								uci.set(data[0], nodeSid, 'port', cfg.port);
-								uci.set(data[0], nodeSid, 'username', cfg.username);
-								uci.set(data[0], nodeSid, 'password', cfg.password);
-								uci.set(data[0], nodeSid, 'socks_version', '5');
+								let importedNodeSid = uci.add(data[0], 'node', nodeSid);
+								uci.set(data[0], importedNodeSid, 'label', label);
+								uci.set(data[0], importedNodeSid, 'type', 'socks');
+								uci.set(data[0], importedNodeSid, 'address', cfg.address);
+								uci.set(data[0], importedNodeSid, 'port', cfg.port);
+								uci.set(data[0], importedNodeSid, 'username', cfg.username);
+								uci.set(data[0], importedNodeSid, 'password', cfg.password);
+								uci.set(data[0], importedNodeSid, 'socks_version', '5');
 
-								uci.add(data[0], 'routing_node', routingNodeSid);
-								uci.set(data[0], routingNodeSid, 'label', label);
-								uci.set(data[0], routingNodeSid, 'enabled', '1');
-								uci.set(data[0], routingNodeSid, 'node', nodeSid);
+								let importedRoutingNodeSid = uci.add(data[0], 'routing_node', routingNodeSid);
+								uci.set(data[0], importedRoutingNodeSid, 'label', label);
+								uci.set(data[0], importedRoutingNodeSid, 'enabled', '1');
+								uci.set(data[0], importedRoutingNodeSid, 'node', importedNodeSid);
 
-								uci.add(data[0], 'routing_rule', routingRuleSid);
-								uci.set(data[0], routingRuleSid, 'label', label);
-								uci.set(data[0], routingRuleSid, 'enabled', '1');
-								uci.set(data[0], routingRuleSid, 'action', 'route');
-								uci.set(data[0], routingRuleSid, 'outbound', routingNodeSid);
-								uci.set(data[0], routingRuleSid, 'source_ip_cidr', sourceIps);
+								let importedRoutingRuleSid = uci.add(data[0], 'routing_rule', routingRuleSid);
+								uci.set(data[0], importedRoutingRuleSid, 'label', label);
+								uci.set(data[0], importedRoutingRuleSid, 'enabled', '1');
+								uci.set(data[0], importedRoutingRuleSid, 'action', 'route');
+								uci.set(data[0], importedRoutingRuleSid, 'outbound', importedRoutingNodeSid);
+								uci.set(data[0], importedRoutingRuleSid, 'source_ip_cidr', sourceIps);
 
 								imported++;
 							}
