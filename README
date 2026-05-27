@@ -8,6 +8,14 @@ opkg update
 opkg install luci-app-fluxproxy
 ```
 
+For APK-based OpenWrt/ImmortalWrt builds:
+
+```sh
+echo 'https://shallowhave.github.io/fluxproxy/releases' >> /etc/apk/repositories
+apk update
+apk add --allow-untrusted luci-app-fluxproxy
+```
+
 TODO:
 - Subscription page slow response with a large number of nodes
 - Refactor nft rules

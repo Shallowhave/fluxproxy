@@ -41,6 +41,8 @@ Assert-Match $buildScript 'Conflicts: luci-app-homeproxy' 'The generated ipk con
 Assert-NotMatch $buildScript 'provider_priority' 'The apk metadata should not use unsupported provider_priority info fields.'
 Assert-Match $readme 'https://shallowhave\.github\.io/fluxproxy/releases' 'README should use the renamed GitHub Pages package feed URL.'
 Assert-NotMatch $readme 'https://shallowhave\.github\.io/homeproxy/releases' 'README should not use the old homeproxy package feed URL.'
+Assert-Match $readme '/etc/apk/repositories' 'README should document the apk repository setup.'
+Assert-Match $readme 'apk add --allow-untrusted luci-app-fluxproxy' 'README should document installing the apk package from the GitHub Pages feed.'
 Assert-Match $buildScript 'origin:https://github\.com/Shallowhave/fluxproxy' 'The generated apk metadata should point to the fluxproxy upstream repository.'
 Assert-Match $buildScript 'Source: https://github\.com/Shallowhave/fluxproxy' 'The generated ipk control file should point to the fluxproxy upstream repository.'
 Assert-Match $buildScript '/etc/init\.d/rpcd restart' 'Package installation should restart rpcd so renamed ubus objects are loaded.'
