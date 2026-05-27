@@ -1,16 +1,16 @@
 Package: luci-app-fluxproxy
-Version: 1779866007~c468fab
+Version: 1779867044~b09b912
 Depends: libc, sing-box, firewall4, kmod-nft-tproxy, ucode-mod-digest
 Conflicts: luci-app-homeproxy
 Source: https://github.com/Shallowhave/fluxproxy
 SourceName: luci-app-fluxproxy
 Section: luci
-SourceDateEpoch: 1779866007
+SourceDateEpoch: 1779867044
 Maintainer: Tianling Shen <cnsztl@immortalwrt.org>
 Architecture: all
-Installed-Size: 2037760
-Filename: luci-app-fluxproxy_1779866007~c468fab_all.ipk
-Size: 632550
-SHA256sum: f096b92d71e9e2b5ce91a9271e4b55188b6060e821e9a589a39a218560b371f9
+Installed-Size: 2027520
+Filename: luci-app-fluxproxy_1779867044~b09b912_all.ipk
+Size: 631237
+SHA256sum: c7b95ab23eb5b1e4adb4d986562acb62a19f5c86e321ab1ee3831984de20b3cd
 Description:  The modern ImmortalWrt proxy platform for ARM64/AMD64
 
