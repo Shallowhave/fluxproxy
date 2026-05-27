@@ -16,17 +16,117 @@
 
 /* Thanks to luci-app-aria2 */
 const css = '				\
-#log_textarea {				\
-	padding: 10px;			\
-	text-align: left;		\
-}					\
-#log_textarea pre {			\
-	padding: .5rem;			\
-	word-break: break-all;		\
-	margin: 0;			\
-}					\
 .description {				\
 	background-color: #33ccff;	\
+}					\
+.homeproxy-log-panel {			\
+	border: 1px solid #d8dee6;	\
+	border-radius: 4px;		\
+	overflow: hidden;		\
+	background: #fff;		\
+}					\
+.homeproxy-log-toolbar {		\
+	display: flex;			\
+	align-items: center;		\
+	gap: 8px;			\
+	padding: 10px;			\
+	background: #f5f7fa;		\
+	border-bottom: 1px solid #e4e8ef;	\
+}					\
+.homeproxy-log-tabs {			\
+	display: grid;			\
+	grid-template-columns: repeat(3, minmax(0, 1fr));	\
+	gap: 10px;			\
+	flex: 1;			\
+}					\
+.homeproxy-log-tab {			\
+	border: 1px solid #d8dee6;	\
+	border-radius: 4px;		\
+	background: #fff;		\
+	color: #333;			\
+	padding: 8px 12px;		\
+	text-align: center;		\
+	cursor: pointer;		\
+}					\
+.homeproxy-log-tab.active {		\
+	border-color: #3b82f6;		\
+	background: #3b82f6;		\
+	color: #fff;			\
+	font-weight: 600;		\
+}					\
+.homeproxy-log-actions {		\
+	display: flex;			\
+	align-items: center;		\
+	gap: 6px;			\
+}					\
+.homeproxy-log-table {			\
+	max-height: 520px;		\
+	overflow: auto;			\
+	font-family: Consolas, Monaco, monospace;	\
+	font-size: 13px;		\
+	line-height: 1.5;		\
+	text-align: left;		\
+}					\
+.homeproxy-log-row {			\
+	display: grid;			\
+	grid-template-columns: 42px 152px 96px minmax(360px, 1fr);	\
+	align-items: center;		\
+	min-width: 760px;		\
+	border-bottom: 1px solid #f1f3f6;	\
+}					\
+.homeproxy-log-row:nth-child(odd) {	\
+	background: #fcfdff;		\
+}					\
+.homeproxy-log-row:hover {		\
+	background: #fff8df;		\
+}					\
+.homeproxy-log-cell {			\
+	padding: 3px 6px;		\
+	white-space: pre-wrap;		\
+	word-break: break-word;		\
+}					\
+.homeproxy-log-line {			\
+	color: #7f8794;			\
+	text-align: right;		\
+	background: #f6f8fb;		\
+}					\
+.homeproxy-log-time {			\
+	color: #a855f7;			\
+}					\
+.homeproxy-log-level {			\
+	display: inline-block;		\
+	min-width: 68px;		\
+	border-radius: 4px;		\
+	padding: 1px 8px;		\
+	text-align: center;		\
+	font-weight: 600;		\
+}					\
+.homeproxy-log-level-info, .homeproxy-log-level-daemon {	\
+	background: #d9f3f4;		\
+	color: #0891b2;			\
+}					\
+.homeproxy-log-level-warn, .homeproxy-log-level-warning {	\
+	background: #fde8d8;		\
+	color: #f97316;			\
+}					\
+.homeproxy-log-level-error, .homeproxy-log-level-fatal, .homeproxy-log-level-panic {	\
+	background: #ffd6d6;		\
+	color: #ef4444;			\
+}					\
+.homeproxy-log-level-debug, .homeproxy-log-level-trace {	\
+	background: #e5e7eb;		\
+	color: #64748b;			\
+}					\
+.homeproxy-log-message.error, .homeproxy-log-message.fatal, .homeproxy-log-message.panic {	\
+	color: #dc2626;			\
+	font-weight: 600;		\
+}					\
+.homeproxy-log-message.warn, .homeproxy-log-message.warning {	\
+	color: #c2410c;			\
+	font-weight: 600;		\
+}					\
+.homeproxy-log-message.info, .homeproxy-log-message.daemon {	\
+	color: #047857;			\
 }';
 
 const hp_dir = '/var/run/homeproxy';
@@ -113,10 +213,92 @@ function getResVersion(o, type) {
 	});
 }
 
-function getRuntimeLog(o, name, _option_index, section_id, _in_table) {
-	const filename = o.option.split('_')[1];
+function parseLogLine(line) {
+	let parsed = {
+		time: '',
+		level: '',
+		message: line
+	};
 
-	let section, log_level_el;
+	let daemon = line.match(/^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\s+\[([^\]]+)\]\s*(.*)$/);
+	if (daemon) {
+		parsed.time = daemon[1];
+		parsed.level = daemon[2];
+		parsed.message = daemon[3];
+		return parsed;
+	}
+
+	let singbox = line.match(/^([A-Z]+)(?:\[[^\]]*\])?\s+(.*)$/);
+	if (singbox) {
+		parsed.level = singbox[1];
+		parsed.message = singbox[2];
+	}
+
+	return parsed;
+}
+
+function renderLogRows(content) {
+	let lines = (content || '').trim().split(/\r?\n/).filter((line) => line.length);
+	if (!lines.length)
+		return E('div', { 'class': 'homeproxy-log-row' }, [
+			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-line' }, '1'),
+			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-time' }, ''),
+			E('span', { 'class': 'homeproxy-log-cell' }, ''),
+			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-message' }, _('Log is empty.'))
+		]);
+
+	return lines.map((line, idx) => {
+		let item = parseLogLine(line);
+		let level = (item.level || '').toLowerCase();
+
+		return E('div', { 'class': 'homeproxy-log-row' }, [
+			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-line' }, String(idx + 1)),
+			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-time' }, item.time),
+			E('span', { 'class': 'homeproxy-log-cell' }, item.level ?
+				E('span', { 'class': 'homeproxy-log-level homeproxy-log-level-' + level }, item.level) : ''),
+			E('span', { 'class': 'homeproxy-log-cell homeproxy-log-message ' + level }, item.message)
+		]);
+	});
+}
+
+function createLogLevelSelect(map, section) {
+	if (!section)
+		return '';
+
+	const selected = uci.get('homeproxy', section, 'log_level') || 'warn';
+	const choices = {
+		trace: _('Trace'),
+		debug: _('Debug'),
+		info: _('Info'),
+		warn: _('Warn'),
+		error: _('Error'),
+		fatal: _('Fatal'),
+		panic: _('Panic')
+	};
+
+	let log_level_el = E('select', {
+		'class': 'cbi-input-select',
+		'style': 'width: 6em;',
+		'change': ui.createHandlerFn(this, (ev) => {
+			uci.set('homeproxy', section, 'log_level', ev.target.value);
+			return map.save(null, true).then(() => {
+				ui.changes.apply(true);
+			});
+		})
+	});
+
+	Object.keys(choices).forEach((v) => {
+		log_level_el.appendChild(E('option', {
+			'value': v,
+			'selected': (v === selected) ? '' : null
+		}, [ choices[v] ]));
+	});
+
+	return log_level_el;
+}
+
+function getLogSection(filename) {
+	let section;
 	switch (filename) {
 	case 'homeproxy':
 		section = null;
@@ -129,38 +311,10 @@ function getRuntimeLog(o, name, _option_index, section_id, _in_table) {
 		break;
 	}
 
-	if (section) {
-		const selected = uci.get('homeproxy', section, 'log_level') || 'warn';
-		const choices = {
-			trace: _('Trace'),
-			debug: _('Debug'),
-			info: _('Info'),
-			warn: _('Warn'),
-			error: _('Error'),
-			fatal: _('Fatal'),
-			panic: _('Panic')
-		};
+	return section;
+}
 
-		log_level_el = E('select', {
-			'id': o.cbid(section_id),
-			'class': 'cbi-input-select',
-			'style': 'margin-left: 4px; width: 6em;',
-			'change': ui.createHandlerFn(this, (ev) => {
-				uci.set('homeproxy', section, 'log_level', ev.target.value);
-				return o.map.save(null, true).then(() => {
-					ui.changes.apply(true);
-				});
-			})
-		});
-
-		Object.keys(choices).forEach((v) => {
-			log_level_el.appendChild(E('option', {
-				'value': v,
-				'selected': (v === selected) ? '' : null
-			}, [ choices[v] ]));
-		});
-	}
-
+function renderLogPanel(map) {
 	const callLogClean = rpc.declare({
 		object: 'luci.homeproxy',
 		method: 'log_clean',
@@ -168,54 +322,85 @@ function getRuntimeLog(o, name, _option_index, section_id, _in_table) {
 		expect: { '': {} }
 	});
 
-	const log_textarea = E('div', { 'id': 'log_textarea' },
+	let activeLog = 'homeproxy';
+	const logs = [
+		{ file: 'homeproxy', title: _('HomeProxy log') },
+		{ file: 'sing-box-c', title: _('sing-box client log') },
+		{ file: 'sing-box-s', title: _('sing-box server log') }
+	];
+	const tabNodes = {};
+	const logTable = E('div', { 'class': 'homeproxy-log-table' },
 		E('img', {
 			'src': L.resource('icons/loading.svg'),
 			'alt': _('Loading'),
 			'style': 'vertical-align:middle'
 		}, _('Collecting data...'))
 	);
+	const actions = E('div', { 'class': 'homeproxy-log-actions' });
 
-	let log;
-	poll.add(L.bind(() => {
-		return fs.read_direct(String.format('%s/%s.log', hp_dir, filename), 'text')
+	function refreshLog() {
+		return fs.read_direct(String.format('%s/%s.log', hp_dir, activeLog), 'text')
 		.then((res) => {
-			log = E('pre', { 'wrap': 'pre' }, [
-				res.trim() || _('Log is empty.')
-			]);
-
-			dom.content(log_textarea, log);
+			dom.content(logTable, renderLogRows(res));
 		}).catch((err) => {
+			let msg;
 			if (err.toString().includes('NotFoundError'))
-				log = E('pre', { 'wrap': 'pre' }, [
-					_('Log file does not exist.')
-				]);
+				msg = _('Log file does not exist.');
 			else
-				log = E('pre', { 'wrap': 'pre' }, [
-					_('Unknown error: %s').format(err)
-				]);
+				msg = _('Unknown error: %s').format(err);
 
-			dom.content(log_textarea, log);
+			dom.content(logTable, renderLogRows(msg));
 		});
+	}
+
+	function renderActions() {
+		dom.content(actions, [
+			createLogLevelSelect(map, getLogSection(activeLog)),
+			E('button', {
+				'class': 'btn cbi-button cbi-button-action',
+				'click': ui.createHandlerFn(this, () => {
+					return L.resolveDefault(callLogClean(activeLog), {});
+				})
+			}, [ _('Clean log') ])
+		]);
+	}
+
+	function setActiveLog(filename) {
+		activeLog = filename;
+		for (let file in tabNodes)
+			tabNodes[file].classList.toggle('active', file === activeLog);
+		renderActions();
+		refreshLog();
+	}
+
+	poll.add(L.bind(() => {
+		return refreshLog();
 	}));
+
+	let tabs = E('div', { 'class': 'homeproxy-log-tabs' }, logs.map((log) => {
+		let tab = E('button', {
+			'class': 'homeproxy-log-tab',
+			'click': ui.createHandlerFn(this, () => {
+				setActiveLog(log.file);
+			})
+		}, [ log.title ]);
+		tabNodes[log.file] = tab;
+		return tab;
+	}));
+
+	renderActions();
+	setActiveLog(activeLog);
 
 	return E([
 		E('style', [ css ]),
-		E('div', {'class': 'cbi-map'}, [
-			E('h3', {'name': 'content', 'style': 'align-items: center; display: flex;'}, [
-				_('%s log').format(name),
-				log_level_el || '',
-				E('button', {
-					'class': 'btn cbi-button cbi-button-action',
-					'style': 'margin-left: 4px;',
-					'click': ui.createHandlerFn(this, () => {
-						return L.resolveDefault(callLogClean(filename), {});
-					})
-				}, [ _('Clean log') ])
-			]),
-			E('div', {'class': 'cbi-section'}, [
-				log_textarea,
-				E('div', {'style': 'text-align:right'},
+		E('div', { 'class': 'cbi-map' }, [
+			E('div', { 'class': 'homeproxy-log-panel' }, [
+				E('div', { 'class': 'homeproxy-log-toolbar' }, [
+					tabs,
+					actions
+				]),
+				logTable,
+				E('div', { 'style': 'text-align:right; padding: 6px 10px; background: #f8fafc;' },
 					E('small', {}, _('Refresh every %s seconds.').format(L.env.pollinterval))
 				)
 			])
@@ -278,14 +463,8 @@ return view.extend({
 		s = m.section(form.NamedSection, 'config', 'homeproxy');
 		s.anonymous = true;
 
-		o = s.option(form.DummyValue, '_homeproxy_logview');
-		o.render = L.bind(getRuntimeLog, this, o, _('HomeProxy'));
-
-		o = s.option(form.DummyValue, '_sing-box-c_logview');
-		o.render = L.bind(getRuntimeLog, this, o, _('sing-box client'));
-
-		o = s.option(form.DummyValue, '_sing-box-s_logview');
-		o.render = L.bind(getRuntimeLog, this, o, _('sing-box server'));
+		o = s.option(form.DummyValue, '_runtime_logview');
+		o.render = L.bind(renderLogPanel, this, m);
 
 		return m.render();
 	},

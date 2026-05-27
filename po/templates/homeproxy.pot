@@ -2027,6 +2027,18 @@ msgstr ""
 msgid "Refresh every %s seconds."
 msgstr ""
 
+#: htdocs/luci-static/resources/view/homeproxy/status.js
+msgid "HomeProxy log"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/status.js
+msgid "sing-box client log"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/status.js
+msgid "sing-box server log"
+msgstr ""
+
 #: htdocs/luci-static/resources/view/homeproxy/server.js:659
 msgid "Region ID"
 msgstr ""

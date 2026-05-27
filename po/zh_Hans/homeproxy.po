@@ -2058,6 +2058,18 @@ msgstr "Redirect TCP + Tun UDP"
 msgid "Refresh every %s seconds."
 msgstr "每 %s 秒刷新。"
 
+#: htdocs/luci-static/resources/view/homeproxy/status.js
+msgid "HomeProxy log"
+msgstr "HomeProxy 日志"
+
+#: htdocs/luci-static/resources/view/homeproxy/status.js
+msgid "sing-box client log"
+msgstr "sing-box 客户端日志"
+
+#: htdocs/luci-static/resources/view/homeproxy/status.js
+msgid "sing-box server log"
+msgstr "sing-box 服务端日志"
+
 #: htdocs/luci-static/resources/view/homeproxy/server.js:659
 msgid "Region ID"
 msgstr "区域 ID"
