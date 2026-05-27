@@ -12,7 +12,7 @@ For APK-based OpenWrt/ImmortalWrt builds:
 
 ```sh
 echo 'https://shallowhave.github.io/fluxproxy/releases' >> /etc/apk/repositories
-apk update
+apk --allow-untrusted update
 apk add --allow-untrusted luci-app-fluxproxy
 ```
 

@@ -150,7 +150,7 @@ jobs:
           pushd repo/releases
           MKHASH=mkhash ipkg-make-index.sh . > Packages
           gzip -9c Packages > Packages.gz
-          apk index -o APKINDEX.tar.gz *.apk
+          apk --allow-untrusted index -o APKINDEX.tar.gz *.apk
           popd
 
       - name: Publishing package feed to GitHub Pages
