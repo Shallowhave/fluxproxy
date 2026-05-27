@@ -1,0 +1,15 @@
+Package: luci-app-homeproxy
+Version: 1779854285~de07679
+Depends: libc, sing-box, firewall4, kmod-nft-tproxy, ucode-mod-digest
+Source: https://github.com/immortalwrt/homeproxy
+SourceName: luci-app-homeproxy
+Section: luci
+SourceDateEpoch: 1779854285
+Maintainer: Tianling Shen <cnsztl@immortalwrt.org>
+Architecture: all
+Installed-Size: 2027520
+Filename: luci-app-homeproxy_1779854285~de07679_all.ipk
+Size: 630768
+SHA256sum: 133749d93ee6fcdbc5846b08860d2e3d4a6f69788ac932f3af2308255c7d8e16
+Description:  The modern ImmortalWrt proxy platform for ARM64/AMD64
+
