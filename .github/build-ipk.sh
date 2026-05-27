@@ -108,8 +108,6 @@ default_prerm' > "$TEMP_DIR/pre-deinstall"
 		--info "url:" \
 		--info "maintainer:Tianling Shen <cnsztl@immortalwrt.org>" \
 		--info "provides:" \
-		--info "provider_priority:100" \
-		--info "replaces:luci-app-homeproxy" \
 		--script "post-install:$TEMP_DIR/post-install" \
 		--script "post-upgrade:$TEMP_DIR/post-upgrade" \
 		--script "pre-deinstall:$TEMP_DIR/pre-deinstall" \

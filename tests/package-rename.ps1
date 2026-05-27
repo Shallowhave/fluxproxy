@@ -38,7 +38,7 @@ function Assert-NotMatch {
 Assert-Match $makefile 'PKG_NAME:=luci-app-fluxproxy' 'The package name should be luci-app-fluxproxy.'
 Assert-Match $makefile 'CONFLICTS:=luci-app-homeproxy' 'The renamed package should conflict with luci-app-homeproxy.'
 Assert-Match $buildScript 'Conflicts: luci-app-homeproxy' 'The generated ipk control file should conflict with luci-app-homeproxy.'
-Assert-Match $buildScript 'replaces:luci-app-homeproxy' 'The generated apk metadata should replace luci-app-homeproxy.'
+Assert-NotMatch $buildScript 'provider_priority' 'The apk metadata should not use unsupported provider_priority info fields.'
 Assert-Match $workflow 'luci-app-fluxproxy_\*\.\*' 'Release upload should match renamed fluxproxy packages.'
 Assert-Match $readme 'opkg install luci-app-fluxproxy' 'README should install the renamed package.'
 Assert-NotMatch $readme 'opkg install luci-app-homeproxy' 'README should not tell users to install the old package name.'
