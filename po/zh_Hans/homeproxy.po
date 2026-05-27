@@ -1252,6 +1252,10 @@ msgid "Section prefix"
 msgstr "配置段前缀"
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Clear existing imported mappings"
+msgstr "清空已有导入映射"
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
 msgid "No SOCKS5 mapping found."
 msgstr "未找到 SOCKS5 映射。"
 

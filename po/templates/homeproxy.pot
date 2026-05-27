@@ -1225,6 +1225,10 @@ msgid "Section prefix"
 msgstr ""
 
 #: htdocs/luci-static/resources/view/homeproxy/client.js
+msgid "Clear existing imported mappings"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/client.js
 msgid "No SOCKS5 mapping found."
 msgstr ""
 

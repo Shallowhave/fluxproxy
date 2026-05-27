@@ -25,5 +25,10 @@ Assert-Match $clientView "uci\.add\(data\[0\], 'routing_rule'" 'Importer should 
 Assert-Match $clientView "source_ip_cidr" 'Importer should assign LAN clients through source_ip_cidr.'
 Assert-Match $clientView "socks_version', '5'" 'Imported SOCKS proxies should default to SOCKS5.'
 Assert-Match $clientView 'Import SOCKS5 mappings' 'Client view should show an import button for SOCKS5 mappings.'
+Assert-Match $clientView 'Clear existing imported mappings' 'Importer should offer an option to clear previous imported mappings.'
+Assert-Match $clientView 'clearSocks5MappingImport' 'Importer should clear previous imported mappings before importing when requested.'
+Assert-Match $clientView "startsWith\(namePrefix \+ '_node_'\)" 'Importer should only clear proxy node sections matching the selected prefix.'
+Assert-Match $clientView "startsWith\(namePrefix \+ '_rnode_'\)" 'Importer should only clear routing node sections matching the selected prefix.'
+Assert-Match $clientView "startsWith\(namePrefix \+ '_rule_'\)" 'Importer should only clear routing rule sections matching the selected prefix.'
 
 Write-Output 'SOCKS5 mapping import source checks passed.'

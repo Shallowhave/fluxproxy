@@ -91,6 +91,21 @@ function nextIPv4Address(ipaddr, offset) {
 	].join('.');
 }
 
+function clearSocks5MappingImport(uciconfig, namePrefix) {
+	uci.sections(uciconfig, 'node', (res) => {
+		if (res['.name'].startsWith(namePrefix + '_node_'))
+			uci.remove(uciconfig, res['.name']);
+	});
+	uci.sections(uciconfig, 'routing_node', (res) => {
+		if (res['.name'].startsWith(namePrefix + '_rnode_'))
+			uci.remove(uciconfig, res['.name']);
+	});
+	uci.sections(uciconfig, 'routing_rule', (res) => {
+		if (res['.name'].startsWith(namePrefix + '_rule_'))
+			uci.remove(uciconfig, res['.name']);
+	});
+}
+
 let stubValidator = {
 	factory: validation,
 	apply(type, value, args) {
@@ -612,6 +627,9 @@ return view.extend({
 				'class': 'cbi-input-text',
 				'value': 'dayuip'
 			});
+			let clearExisting = E('input', {
+				'type': 'checkbox'
+			});
 
 			ui.showModal(_('Import SOCKS5 mappings'), [
 				E('p', _('Format: host|port|username|password|expire')),
@@ -627,6 +645,10 @@ return view.extend({
 				E('div', { 'class': 'cbi-value' }, [
 					E('label', { 'class': 'cbi-value-title' }, _('Section prefix')),
 					E('div', { 'class': 'cbi-value-field' }, [ prefix ])
+				]),
+				E('div', { 'class': 'cbi-value' }, [
+					E('label', { 'class': 'cbi-value-title' }, _('Clear existing imported mappings')),
+					E('div', { 'class': 'cbi-value-field' }, [ clearExisting ])
 				]),
 				E('div', { 'class': 'right' }, [
 					E('button', {
@@ -650,6 +672,9 @@ return view.extend({
 								return ui.addNotification(null, E('p', _('Expecting: %s').format(_('positive integer'))));
 							if (!namePrefix.match(/^[A-Za-z0-9_]+$/))
 								return ui.addNotification(null, E('p', _('Expecting: %s').format(_('valid section prefix'))));
+
+							if (clearExisting.checked)
+								clearSocks5MappingImport(data[0], namePrefix);
 
 							let imported = 0;
 							for (let i = 0; i < lines.length; i++) {
