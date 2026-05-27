@@ -107,7 +107,7 @@ default_prerm' > "$TEMP_DIR/pre-deinstall"
 		--info "name:$PKG_NAME" \
 		--info "version:$PKG_VERSION" \
 		--info "description:The modern ImmortalWrt proxy platform for ARM64/AMD64" \
-		--info "arch:all" \
+		--info "arch:noarch" \
 		--info "origin:https://github.com/Shallowhave/fluxproxy" \
 		--info "url:" \
 		--info "maintainer:Tianling Shen <cnsztl@immortalwrt.org>" \
@@ -119,7 +119,7 @@ default_prerm' > "$TEMP_DIR/pre-deinstall"
 		--files "$TEMP_PKG_DIR" \
 		--output "$TEMP_DIR/${PKG_NAME}_${PKG_VERSION}.apk"
 
-	mv "$TEMP_DIR/${PKG_NAME}_${PKG_VERSION}.apk" "$BASE_DIR/${PKG_NAME}_${PKG_VERSION}_all.apk"
+	mv "$TEMP_DIR/${PKG_NAME}_${PKG_VERSION}.apk" "$BASE_DIR/${PKG_NAME}_${PKG_VERSION}_noarch.apk"
 else
 	mkdir -p "$TEMP_PKG_DIR/CONTROL/"
 

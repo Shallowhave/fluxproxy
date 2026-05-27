@@ -47,6 +47,8 @@ Assert-Match $readme 'apk --allow-untrusted update' 'README should document upda
 Assert-Match $readme 'apk add --allow-untrusted luci-app-fluxproxy' 'README should document installing the apk package from the GitHub Pages feed.'
 Assert-Match $buildScript 'origin:https://github\.com/Shallowhave/fluxproxy' 'The generated apk metadata should point to the fluxproxy upstream repository.'
 Assert-Match $buildScript 'Source: https://github\.com/Shallowhave/fluxproxy' 'The generated ipk control file should point to the fluxproxy upstream repository.'
+Assert-Match $buildScript '--info "arch:noarch"' 'The generated apk package should use the apk noarch architecture instead of the opkg all architecture.'
+Assert-Match $buildScript '\$\{PKG_NAME\}_\$\{PKG_VERSION\}_noarch\.apk' 'The generated apk package filename should match the apk noarch architecture.'
 Assert-Match $buildScript '/etc/init\.d/rpcd restart' 'Package installation should restart rpcd so renamed ubus objects are loaded.'
 Assert-Match $buildScript '/etc/init\.d/uhttpd restart' 'Package installation should restart uhttpd so LuCI uses fresh menu and module caches.'
 Assert-Match $buildScript '\[ -n "\$\{IPKG_INSTROOT\}" \] \|\| \{\s+rm -f /tmp/luci-indexcache /tmp/luci-indexcache\.\*' 'APK post-install scripts should clear all LuCI index cache variants.'

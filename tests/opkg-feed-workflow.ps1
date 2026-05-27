@@ -23,7 +23,7 @@ Assert-Match $workflow 'cp \.github/\*\.apk repo/releases/' 'The workflow should
 Assert-Match $workflow 'apk --allow-untrusted mkndx' 'The workflow should use apk mkndx for apk v3 packages.'
 Assert-Match $workflow '--output Packages\.adb' 'The workflow should generate a v3 Packages.adb index for apk clients.'
 Assert-Match $workflow '--pkgname-spec' 'The workflow should make apk index entries point at the generated package filenames.'
-Assert-Match $workflow '\$\{name\}_\$\{version\}_\$\{arch\}\.apk' 'The workflow should use the generated apk package filename format.'
+Assert-Match $workflow '\$\{name\}_\$\{version\}_\$\{arch\}\.apk' 'The workflow should use the apk package filename format generated from package metadata.'
 Assert-Match $workflow 'peaceiris/actions-gh-pages@v4' 'The workflow should deploy the package feed to GitHub Pages.'
 Assert-Match $workflow 'publish_dir: ./repo' 'The GitHub Pages deploy step should publish the generated repo directory.'
 
