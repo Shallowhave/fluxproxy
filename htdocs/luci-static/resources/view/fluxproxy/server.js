@@ -62,6 +62,16 @@ function renderStatus(isRunning, version) {
 	return renderHTML;
 }
 
+function renderIntroLink() {
+	return E('span', {}, [
+		E('a', {
+			href: 'http://www.dayuip.com/#/register?invitation=memory&shareid=195',
+			target: '_blank',
+			rel: 'noopener noreferrer'
+		}, _('IP purchase'))
+	]);
+}
+
 function handleGenKey(option) {
 	let section_id = this.section.section;
 	let type = this.section.getOption('type')?.formvalue(section_id);
@@ -126,8 +136,7 @@ return view.extend({
 		let m, s, o;
 		let features = data[1];
 
-		m = new form.Map('fluxproxy', _('FluxProxy Server'),
-			_('The modern ImmortalWrt proxy platform for ARM64/AMD64.'));
+		m = new form.Map('fluxproxy', _('FluxProxy Server'), renderIntroLink());
 
 		s = m.section(form.TypedSection);
 		s.render = function() {
