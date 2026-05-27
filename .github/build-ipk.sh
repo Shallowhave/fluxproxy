@@ -141,7 +141,13 @@ else
 [ "${IPKG_NO_SCRIPT}" = "1" ] && exit 0
 [ -s ${IPKG_INSTROOT}/lib/functions.sh ] || exit 0
 . ${IPKG_INSTROOT}/lib/functions.sh
-default_postinst $0 $@' > "$TEMP_PKG_DIR/CONTROL/postinst"
+default_postinst $0 $@
+[ -n "${IPKG_INSTROOT}" ] || {
+	rm -f /tmp/luci-indexcache /tmp/luci-indexcache.*
+	rm -rf /tmp/luci-modulecache/
+	/etc/init.d/rpcd restart 2>/dev/null || killall -HUP rpcd 2>/dev/null
+	/etc/init.d/uhttpd restart 2>/dev/null || true
+}' > "$TEMP_PKG_DIR/CONTROL/postinst"
 	chmod 0755 "$TEMP_PKG_DIR/CONTROL/postinst"
 
 	echo -e "[ -n "\${IPKG_INSTROOT}" ] || {
