@@ -32,9 +32,14 @@ on:
     types:
       - published
 
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout source tree
@@ -61,7 +66,7 @@ jobs:
         run: |
           sudo -E rm -rf /var/lib/man-db/auto-update
           sudo -E apt-get update -qq
-          sudo -E apt-get install -y build-essential curl fakeroot libssl-dev lua5.1 meson ninja-build
+          sudo -E apt-get install -y build-essential curl fakeroot libssl-dev lua5.1 meson ninja-build opkg-utils
 
           pushd apk-tools
           meson setup build \
@@ -121,3 +126,21 @@ jobs:
           file: .github/luci-app-homeproxy_*.*
           file_glob: true
           tag: ${{ github.ref }}
+
+      - name: Build opkg package feed
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p repo/releases
+          cp .github/*.ipk repo/releases/
+
+          pushd repo/releases
+          opkg-make-index . > Packages
+          gzip -9c Packages > Packages.gz
+          popd
+
+      - name: Publishing opkg package feed to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: github.event_name != 'pull_request'
+        with:
+          github_token: ${{ github.token }}
+          publish_dir: ./repo
