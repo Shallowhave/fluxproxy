@@ -66,7 +66,7 @@ function renderIntroLink() {
 			href: 'http://www.dayuip.com/#/register?invitation=memory&shareid=195',
 			target: '_blank',
 			rel: 'noopener noreferrer'
-		}, _('IP purchase'))
+		}, _('Residential dedicated IP purchase'))
 	]);
 }
 

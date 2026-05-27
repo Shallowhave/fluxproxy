@@ -2613,6 +2613,9 @@ msgstr ""
 msgid "IP purchase"
 msgstr ""
 
+msgid "Residential dedicated IP purchase"
+msgstr ""
+
 #: htdocs/luci-static/resources/view/homeproxy/client.js:454
 #: htdocs/luci-static/resources/view/homeproxy/server.js:875
 msgid "The network interface to bind to."
