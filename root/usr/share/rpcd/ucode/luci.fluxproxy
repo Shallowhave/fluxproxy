@@ -20,6 +20,7 @@ function hasKernelModule(kmod) {
 
 const HP_DIR = '/etc/fluxproxy';
 const RUN_DIR = '/var/run/fluxproxy';
+const resource_types = ['china_ip4', 'china_ip6', 'china_list', 'gfw_list'];
 
 const methods = {
 	acllist_read: {
@@ -161,9 +162,10 @@ const methods = {
 				return { result: false, error: 'illegal type' };
 
 			const type = req.args?.type;
+			const params = req.args?.params ? shellquote(req.args.params) : '';
 			let result = {};
 
-			const fd = popen('/usr/bin/sing-box generate ' + type + ` ${req.args?.params || ''}`);
+			const fd = popen('/usr/bin/sing-box generate ' + type + (params ? ' ' + params : ''));
 			if (fd) {
 				let ech_cfg_set = false;
 				let ech_key_set = false;
@@ -241,12 +243,12 @@ const methods = {
 	resources_update: {
 		args: { type: 'type' },
 		call: function(req) {
-			if (req.args?.type) {
-				const type = shellquote(req.args?.type);
-				const exit_code = system(`${HP_DIR}/scripts/update_resources.sh ${type}`);
-				return { status: exit_code };
-			} else
+			if (!(req.args?.type in resource_types))
 				return { status: 255, error: 'illegal type' };
+
+			const type = shellquote(req.args?.type);
+			const exit_code = system(`${HP_DIR}/scripts/update_resources.sh ${type}`);
+			return { status: exit_code };
 		}
 	}
 };

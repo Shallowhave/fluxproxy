@@ -983,8 +983,8 @@ msgid "Google Public DNS (8.8.8.8)"
 msgstr "谷歌公共 DNS（8.8.8.8）"
 
 #: root/usr/share/rpcd/acl.d/luci-app-fluxproxy.json:3
-msgid "Grant access to homeproxy configuration"
-msgstr "授予 homeproxy 访问 UCI 配置的权限"
+msgid "Grant access to fluxproxy configuration"
+msgstr "授予 fluxproxy 访问 UCI 配置的权限"
 
 #: htdocs/luci-static/resources/view/fluxproxy/client.js:620
 #: htdocs/luci-static/resources/view/fluxproxy/client.js:1108
@@ -1036,14 +1036,14 @@ msgstr "心跳间隔"
 #: htdocs/luci-static/resources/view/fluxproxy/client.js:101
 #: htdocs/luci-static/resources/view/fluxproxy/status.js:282
 #: root/usr/share/luci/menu.d/luci-app-fluxproxy.json:3
-msgid "HomeProxy"
-msgstr "HomeProxy"
+msgid "FluxProxy"
+msgstr "FluxProxy"
 
 #: htdocs/luci-static/resources/view/fluxproxy/server.js:58
 #: htdocs/luci-static/resources/view/fluxproxy/server.js:60
 #: htdocs/luci-static/resources/view/fluxproxy/server.js:129
-msgid "HomeProxy Server"
-msgstr "HomeProxy 服务端"
+msgid "FluxProxy Server"
+msgstr "FluxProxy 服务端"
 
 #: htdocs/luci-static/resources/view/fluxproxy/node.js:535
 msgid "Hop interval"
@@ -2059,8 +2059,8 @@ msgid "Refresh every %s seconds."
 msgstr "每 %s 秒刷新。"
 
 #: htdocs/luci-static/resources/view/fluxproxy/status.js
-msgid "HomeProxy log"
-msgstr "HomeProxy 日志"
+msgid "FluxProxy log"
+msgstr "FluxProxy 日志"
 
 #: htdocs/luci-static/resources/view/fluxproxy/status.js
 msgid "sing-box client log"

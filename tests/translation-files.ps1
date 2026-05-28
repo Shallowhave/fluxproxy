@@ -18,6 +18,18 @@ function Assert-Match {
 	}
 }
 
+function Assert-NotMatch {
+	param(
+		[string]$Text,
+		[string]$Pattern,
+		[string]$Message
+	)
+
+	if ($Text -match $Pattern) {
+		throw $Message
+	}
+}
+
 function ConvertFrom-Codepoint {
 	param([int[]]$Codepoints)
 
@@ -41,6 +53,8 @@ Assert-Match $zhCn 'root/usr/share/luci/menu.d/luci-app-fluxproxy\.json' 'The Ch
 Assert-Match $pot 'root/usr/share/luci/menu.d/luci-app-fluxproxy\.json' 'The translation template comments should reference the renamed menu file.'
 Assert-Match $zhCn 'root/usr/share/rpcd/acl.d/luci-app-fluxproxy\.json' 'The Chinese translation comments should reference the renamed ACL file.'
 Assert-Match $pot 'root/usr/share/rpcd/acl.d/luci-app-fluxproxy\.json' 'The translation template comments should reference the renamed ACL file.'
+Assert-NotMatch $zhCn 'homeproxy' 'The Chinese translation catalog should not contain the old homeproxy name.'
+Assert-NotMatch $pot 'homeproxy' 'The translation template should not contain the old homeproxy name.'
 Assert-Match $zhCn (ConvertFrom-Codepoint @(0x5ba2, 0x6237, 0x7aef, 0x8bbe, 0x7f6e)) 'The Chinese translation catalog should keep readable UTF-8 Chinese text.'
 Assert-Match $zhCn (ConvertFrom-Codepoint @(0x8def, 0x7531, 0x8bbe, 0x7f6e)) 'The Chinese translation catalog should keep readable UTF-8 Chinese tab labels.'
 Assert-Match $zhCn (ConvertFrom-Codepoint @(0x5bb6, 0x5ead, 0x4f4f, 0x5b85, 0x20, 0x49, 0x50, 0xff0c, 0x72ec, 0x4eab, 0x7ebf, 0x8def, 0xff0c, 0x70b9, 0x51fb, 0x8d2d, 0x4e70)) 'The Dayu IP purchase translation should stay readable UTF-8 Chinese.'

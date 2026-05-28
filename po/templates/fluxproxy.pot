@@ -960,7 +960,7 @@ msgid "Google Public DNS (8.8.8.8)"
 msgstr ""
 
 #: root/usr/share/rpcd/acl.d/luci-app-fluxproxy.json:3
-msgid "Grant access to homeproxy configuration"
+msgid "Grant access to fluxproxy configuration"
 msgstr ""
 
 #: htdocs/luci-static/resources/view/fluxproxy/client.js:620
@@ -1013,13 +1013,13 @@ msgstr ""
 #: htdocs/luci-static/resources/view/fluxproxy/client.js:101
 #: htdocs/luci-static/resources/view/fluxproxy/status.js:282
 #: root/usr/share/luci/menu.d/luci-app-fluxproxy.json:3
-msgid "HomeProxy"
+msgid "FluxProxy"
 msgstr ""
 
 #: htdocs/luci-static/resources/view/fluxproxy/server.js:58
 #: htdocs/luci-static/resources/view/fluxproxy/server.js:60
 #: htdocs/luci-static/resources/view/fluxproxy/server.js:129
-msgid "HomeProxy Server"
+msgid "FluxProxy Server"
 msgstr ""
 
 #: htdocs/luci-static/resources/view/fluxproxy/node.js:535
@@ -2028,7 +2028,7 @@ msgid "Refresh every %s seconds."
 msgstr ""
 
 #: htdocs/luci-static/resources/view/fluxproxy/status.js
-msgid "HomeProxy log"
+msgid "FluxProxy log"
 msgstr ""
 
 #: htdocs/luci-static/resources/view/fluxproxy/status.js
