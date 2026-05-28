@@ -31,6 +31,11 @@ function Assert-NotMatch {
 
 Assert-Match $workflow 'OPKG_USIGN_SECRET_B64' 'Workflow should read the opkg usign private key from GitHub Secrets.'
 Assert-Match $workflow 'OPKG_USIGN_PUBLIC_B64' 'Workflow should publish the opkg usign public key.'
+Assert-Match $workflow 'apt-get install -y .*cmake' 'Workflow should install cmake to build usign from source.'
+Assert-Match $workflow 'git clone --depth=1 https://git\.openwrt\.org/project/usign\.git usign' 'Workflow should build usign from source instead of downloading a release-specific ipk.'
+Assert-Match $workflow 'cmake -S usign -B usign/build' 'Workflow should configure the usign source build.'
+Assert-Match $workflow 'usign/build/usign' 'Workflow should install the built usign binary.'
+Assert-NotMatch $workflow 'downloads\.openwrt\.org/.*/usign_.*\.ipk' 'Workflow should not depend on a release-specific usign binary URL.'
 Assert-Match $workflow 'APK_SIGN_KEY_B64' 'Workflow should read the apk private key from GitHub Secrets.'
 Assert-Match $workflow 'APK_SIGN_PUBLIC_B64' 'Workflow should publish the apk public key.'
 Assert-Match $workflow 'usign -S -m Packages -s "\$\{OPKG_USIGN_KEY\}"' 'Workflow should sign the opkg Packages index.'

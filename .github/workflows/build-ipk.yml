@@ -66,7 +66,7 @@ jobs:
         run: |
           sudo -E rm -rf /var/lib/man-db/auto-update
           sudo -E apt-get update -qq
-          sudo -E apt-get install -y build-essential curl fakeroot libssl-dev lua5.1 meson ninja-build
+          sudo -E apt-get install -y build-essential cmake curl fakeroot libssl-dev lua5.1 meson ninja-build
 
           pushd apk-tools
           meson setup build \
@@ -96,11 +96,10 @@ jobs:
           curl -fLO "https://raw.githubusercontent.com/openwrt/openwrt/master/scripts/ipkg-make-index.sh"
           sudo install -m0755 ipkg-make-index.sh /usr/local/bin/ipkg-make-index.sh
 
-          curl -fLO "https://downloads.openwrt.org/releases/23.05.5/targets/x86/64/packages/usign_2020-05-23-f1f65026-1_x86_64.ipk"
-          mkdir -p usign-ipk
-          tar -xzf usign_*.ipk -C usign-ipk ./data.tar.gz
-          tar -xzf usign-ipk/data.tar.gz -C usign-ipk ./usr/bin/usign
-          sudo install -m0755 usign-ipk/usr/bin/usign /usr/local/bin/usign
+          git clone --depth=1 https://git.openwrt.org/project/usign.git usign
+          cmake -S usign -B usign/build
+          cmake --build usign/build
+          sudo install -m0755 usign/build/usign /usr/local/bin/usign
 
           cat > mkhash <<'EOF'
           #!/bin/sh
