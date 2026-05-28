@@ -103,7 +103,7 @@ export root="${IPKG_INSTROOT}"
 export pkgname="'"$PKG_NAME"'"
 default_prerm' > "$TEMP_DIR/pre-deinstall"
 
-	apk mkpkg \
+	apk ${APK_SIGN_KEY:+--sign-key "${APK_SIGN_KEY}"} mkpkg \
 		--info "name:$PKG_NAME" \
 		--info "version:$PKG_VERSION" \
 		--info "description:The modern ImmortalWrt proxy platform for ARM64/AMD64" \

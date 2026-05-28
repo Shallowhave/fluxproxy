@@ -96,6 +96,12 @@ jobs:
           curl -fLO "https://raw.githubusercontent.com/openwrt/openwrt/master/scripts/ipkg-make-index.sh"
           sudo install -m0755 ipkg-make-index.sh /usr/local/bin/ipkg-make-index.sh
 
+          curl -fLO "https://downloads.openwrt.org/releases/23.05.5/targets/x86/64/packages/usign_2020-05-23-f1f65026-1_x86_64.ipk"
+          mkdir -p usign-ipk
+          tar -xzf usign_*.ipk -C usign-ipk ./data.tar.gz
+          tar -xzf usign-ipk/data.tar.gz -C usign-ipk ./usr/bin/usign
+          sudo install -m0755 usign-ipk/usr/bin/usign /usr/local/bin/usign
+
           cat > mkhash <<'EOF'
           #!/bin/sh
           if [ "$1" = "sha256" ]; then
@@ -105,6 +111,30 @@ jobs:
           EOF
           chmod 0755 mkhash
           sudo install -m0755 mkhash /usr/local/bin/mkhash
+
+      - name: Prepare signing keys
+        if: github.event_name != 'pull_request'
+        env:
+          OPKG_USIGN_SECRET_B64: ${{ secrets.OPKG_USIGN_SECRET_B64 }}
+          OPKG_USIGN_PUBLIC_B64: ${{ secrets.OPKG_USIGN_PUBLIC_B64 }}
+          APK_SIGN_KEY_B64: ${{ secrets.APK_SIGN_KEY_B64 }}
+          APK_SIGN_PUBLIC_B64: ${{ secrets.APK_SIGN_PUBLIC_B64 }}
+        run: |
+          if [ -n "${OPKG_USIGN_SECRET_B64}" ] && [ -n "${OPKG_USIGN_PUBLIC_B64}" ]; then
+            printf '%s' "${OPKG_USIGN_SECRET_B64}" | base64 -d > "${RUNNER_TEMP}/fluxproxy-opkg.key"
+            printf '%s' "${OPKG_USIGN_PUBLIC_B64}" | base64 -d > "${RUNNER_TEMP}/fluxproxy-opkg.pub"
+            chmod 0600 "${RUNNER_TEMP}/fluxproxy-opkg.key"
+            echo "OPKG_USIGN_KEY=${RUNNER_TEMP}/fluxproxy-opkg.key" >> "${GITHUB_ENV}"
+            echo "OPKG_USIGN_PUBLIC=${RUNNER_TEMP}/fluxproxy-opkg.pub" >> "${GITHUB_ENV}"
+          fi
+
+          if [ -n "${APK_SIGN_KEY_B64}" ] && [ -n "${APK_SIGN_PUBLIC_B64}" ]; then
+            printf '%s' "${APK_SIGN_KEY_B64}" | base64 -d > "${RUNNER_TEMP}/fluxproxy-apk.key"
+            printf '%s' "${APK_SIGN_PUBLIC_B64}" | base64 -d > "${RUNNER_TEMP}/fluxproxy-apk.pub"
+            chmod 0600 "${RUNNER_TEMP}/fluxproxy-apk.key"
+            echo "APK_SIGN_KEY=${RUNNER_TEMP}/fluxproxy-apk.key" >> "${GITHUB_ENV}"
+            echo "APK_SIGN_PUBLIC=${RUNNER_TEMP}/fluxproxy-apk.pub" >> "${GITHUB_ENV}"
+          fi
 
       - name: Build ipk file
         run: |
@@ -149,8 +179,19 @@ jobs:
 
           pushd repo/releases
           MKHASH=mkhash ipkg-make-index.sh . > Packages
+          if [ -n "${OPKG_USIGN_KEY:-}" ]; then
+            usign -S -m Packages -s "${OPKG_USIGN_KEY}"
+            cp "${OPKG_USIGN_PUBLIC}" fluxproxy-opkg.pub
+          else
+            echo "::warning::OPKG signing secrets are not configured; opkg feed will remain unsigned."
+          fi
           gzip -9c Packages > Packages.gz
-          apk --allow-untrusted mkndx \
+          if [ -n "${APK_SIGN_PUBLIC:-}" ]; then
+            cp "${APK_SIGN_PUBLIC}" fluxproxy-apk.pub
+          else
+            echo "::warning::APK signing secrets are not configured; apk feed will remain unsigned."
+          fi
+          apk ${APK_SIGN_KEY:+--sign-key "${APK_SIGN_KEY}"} --allow-untrusted mkndx \
             --output Packages.adb \
             --pkgname-spec '${name}_${version}_${arch}.apk' \
             *.apk

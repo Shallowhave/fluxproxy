@@ -20,7 +20,7 @@ Assert-Match $workflow 'raw\.githubusercontent\.com/openwrt/openwrt/master/scrip
 Assert-Match $workflow 'MKHASH=mkhash ipkg-make-index\.sh \. > Packages' 'The workflow should generate an opkg Packages index with OpenWrt ipkg-make-index.sh.'
 Assert-Match $workflow 'gzip -9.*Packages' 'The workflow should generate Packages.gz for opkg clients.'
 Assert-Match $workflow 'cp \.github/\*\.apk repo/releases/' 'The workflow should publish apk packages into the GitHub Pages package feed.'
-Assert-Match $workflow 'apk --allow-untrusted mkndx' 'The workflow should use apk mkndx for apk v3 packages.'
+Assert-Match $workflow 'apk .*--allow-untrusted mkndx' 'The workflow should use apk mkndx for apk v3 packages.'
 Assert-Match $workflow '--output Packages\.adb' 'The workflow should generate a v3 Packages.adb index for apk clients.'
 Assert-Match $workflow '--pkgname-spec' 'The workflow should make apk index entries point at the generated package filenames.'
 Assert-Match $workflow '\$\{name\}_\$\{version\}_\$\{arch\}\.apk' 'The workflow should use the apk package filename format generated from package metadata.'

@@ -3,6 +3,8 @@
 Published builds are available as an opkg feed through GitHub Pages:
 
 ```sh
+wget -O /tmp/fluxproxy-opkg.pub https://shallowhave.github.io/fluxproxy/releases/fluxproxy-opkg.pub
+cp /tmp/fluxproxy-opkg.pub "/etc/opkg/keys/$(usign -F -p /tmp/fluxproxy-opkg.pub)"
 echo 'src/gz fluxproxy https://shallowhave.github.io/fluxproxy/releases' >> /etc/opkg/customfeeds.conf
 opkg update
 opkg install luci-app-fluxproxy
@@ -11,9 +13,10 @@ opkg install luci-app-fluxproxy
 For APK-based OpenWrt/ImmortalWrt builds:
 
 ```sh
+wget -O /etc/apk/keys/fluxproxy-apk.pub https://shallowhave.github.io/fluxproxy/releases/fluxproxy-apk.pub
 echo 'ndx https://shallowhave.github.io/fluxproxy/releases/Packages.adb' >> /etc/apk/repositories
-apk --allow-untrusted update
-apk add --allow-untrusted luci-app-fluxproxy
+apk update
+apk add luci-app-fluxproxy
 ```
 
 TODO:
